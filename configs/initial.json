@@ -1,0 +1,16 @@
+{
+  "Application": {
+    "Name": "Crust",
+    "Version": "1.0.0",
+    "Author": "Dustin Estes",
+    "Company": "VividRock",
+    "Date": "2026-03-02",
+    "Copyright": "2026 VividRock | All Rights Reserved",
+    "License": "GNU General Public License v3.0",
+    "Purpose": "A PowerShell CLI Menu Framework",
+    "Links": "https://github.com/VividRock/Crust"
+  },
+  "Settings": {
+    "RunAsAdminRequired": false
+  }
+}
