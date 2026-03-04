@@ -2,11 +2,11 @@
 
 <!-- PROJECT HEADER -->
 <br />
-<div align="center">
-  <a href="https://github.com/VividRock/Crust/">
-    <img src="assets/logo.png" alt="Logo" width="512" height="512">
-  </a>
-  <br />
+  <div align="center">
+    <a href="https://github.com/VividRock/Crust/">
+      <img src="assets/logo.png" alt="Logo" width="512" height="512">
+    </a>
+<br />
 
 # Crust - A PowerShell CLI Menu Framework
 
@@ -28,12 +28,13 @@
   - [About](#about)
     - [Features](#features)
     - [Tech Stack](#tech-stack)
+    - [Screenshots](#screenshots)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
   - [Roadmap](#roadmap)
-  - [Version History](#version-history)
+  - [Release History](#release-history)
   - [Contribution](#contribution)
     - [Top contributors:](#top-contributors)
   - [License](#license)
@@ -59,6 +60,19 @@ This framework utilizes the following languages and applications:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+### Screenshots
+
+<br />
+  <div align="center">
+    <a href="https://github.com/VividRock/Crust/">
+      <img src="assets/screenshot_mainmenu.png" alt="Logo" width="512" height="512">
+    </a>
+<br />
+
+This shows the main menu with a sample menu structure.
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Getting Started
 
 Use the following section to learn how to start using the Crust framework to build your project's next CLI menu.
@@ -71,36 +85,44 @@ Use the following section to learn how to start using the Crust framework to bui
 
 ### Installation
 
-TODO Add Content
+To utilize within your scripts and applications, you need the following folders and files
+
+> Note: The folders need to maintain their relative location to the main controller script.
+
+- configs
+- lang
+- modules
+- crust.ps1
+- LICENSE
+- README.md
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
 
-TODO Add content
+The script provides a single parameter for explicitly defining the PSUICulture value if don't want to autodetect it.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://github.com/VividRock/Crust/tree/main/docs)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Roadmap
 
-- [ ] Convert old code to official project
-- [ ] Implement a remote usage direct from GitHub Repo for simpler integration into user projects
+- [X] Convert old code to official project
 
 _For a full list of proposed features and issues, please refer to the [Issues](https://github.com/VividRock/Crust/issues)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Version History
+## Release History
 
-This provides a brief review of the last two versions and an overview of their changes.
+This provides a brief review of the last two releases and an overview of their changes.
 
-| Version | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
+| Release | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
 |---------|-----------|-------------|-----------------|-------------------|---------|
 | 1.0.0   | Anorthose | 2026-03-02  | Dustin Estes    | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | Supported |
 
-_For a detailed list of all changes, please refer to the [Version History](https://github.com/VividRock/Crust/docs/vershionhistory.md)_
+_For a detailed list of all changes, please refer to the [Releases](https://github.com/VividRock/Crust/releases)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
