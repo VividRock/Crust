@@ -1,16 +1,10 @@
 <a id="readme-top"></a>
-
-<!-- PROJECT HEADER -->
-<br />
-  <div align="center">
-    <a href="https://github.com/VividRock/Crust/">
-      <img src="assets/logo.png" alt="Logo" width="512" height="512">
-    </a>
-<br />
+<div align="center">
+  <img src="assets/logo.png" alt="Alt text" width="512"/>
+<br>
 
 # Crust - A PowerShell CLI Menu Framework
 
-<!-- PROJECT SHIELDS -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -19,7 +13,6 @@
 
 </div>
 
-<br>
 
 ## Table of Contents
 
@@ -58,16 +51,14 @@ This framework utilizes the following languages and applications:
 
 [![PowerShell][PowerShell]][powershell-url]
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
 ### Screenshots
 
-<br />
-  <div align="center">
+  <div align="left">
     <a href="https://github.com/VividRock/Crust/">
-      <img src="assets/screenshot_mainmenu.png" alt="Logo" width="512" height="512">
+      <img src="assets/screenshot_mainmenu.png" alt="screenshot of main menu">
     </a>
-<br />
+  </div>
+  <br>
 
 This shows the main menu with a sample menu structure.
 
@@ -176,6 +167,5 @@ Any special acknowledgements or recognitions that contributed to the success of 
 [license-shield]: https://img.shields.io/github/license/VividRock/Crust.svg?style=for-the-badge
 [license-url]: https://github.com/VividRock/Crust/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
-TODO Screenshot
 [PowerShell]: https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white
 [PowerShell-url]: https://learn.microsoft.com/en-us/powershell/
