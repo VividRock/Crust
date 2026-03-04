@@ -1,3 +1,100 @@
 {
-  "[Reference]": "[Message]"
+  "Header": {
+    "01": "___________________ ____ ___  ____________________",
+    "02": "\\_   ___ \\______   \\    |   \\/   _____/\\__    ___/",
+    "03": "/    \\  \\/|       _/    |   /\\_____  \\   |    |   ",
+    "04": "\\     \\___|    |   \\    |  / /        \\  |    |   ",
+    "05": " \\________/____|___/______/ /_________/  |____|   "
+  },
+  "Component": {
+    "Divider": "-----------------------------------------------------------------------------------------------------------------",
+    "LineBreak": " ",
+    "Indention": "  "
+  },
+  "TitleBar": {
+    "Pattern": "  {{copyright}}                         DebugMode: {{debugmode}}    v{{version}}"
+  },
+  "Prompt": {
+    "VerifyContinue": "Do you want to continue?",
+    "Response_VerifyYesNo_Yes": "Yes",
+    "Response_VerifyYesNo_No": "No",
+    "Response_VerifyYesNo_IncorrectInput": "Invalid input. Please enter Yes or No."
+  },
+  "DynamicToken": {
+    "copyright": "$Config_initialize.Application.Copyright",
+    "debugmode": "if ($($Config_initialize.Settings.DebugMode)) { \"Enabled \" } else { \"Disabled\" }",
+    "version": "$Config_initialize.Application.Version"
+  },
+  "MenuStructure": [
+    {
+      "Name": "Main",
+      "MenuItems": [
+        {
+          "Index": "01",
+          "Label": "SubMenu 1",
+          "ScriptBlock": "Return \"SubMenu 1\""
+        },
+        {
+          "Index": "02",
+          "Label": "SubMenu 2",
+          "ScriptBlock": "Show-InterfaceMenu -MenuName \"SubMenu 2\""
+        },
+        {
+          "Index": "x",
+          "Label": "Quit",
+          "ScriptBlock": "Return \"Quit\""
+        }
+      ]
+    },
+    {
+      "Name": "SubMenu 1",
+      "MenuItems": [
+        {
+          "Index": "01",
+          "Label": "Action 1",
+          "ScriptBlock": "Invoke-Action1"
+        },
+        {
+          "Index": "02",
+          "Label": "Action 2",
+          "ScriptBlock": "Invoke-Action2"
+        },
+        {
+          "Index": "03",
+          "Label": "Action 3",
+          "ScriptBlock": "Invoke-Action3"
+        },
+        {
+          "Index": "b",
+          "Label": "Back to Main Menu",
+          "ScriptBlock": "Show-InterfaceMenu -MenuName \"Main\""
+        }
+      ]
+    },
+    {
+      "Name": "SubMenu 2",
+      "MenuItems": [
+        {
+          "Index": "01",
+          "Label": "Query 1",
+          "ScriptBlock": "Invoke-Query1"
+        },
+        {
+          "Index": "02",
+          "Label": "Query 2",
+          "ScriptBlock": "Invoke-Query2"
+        },
+        {
+          "Index": "03",
+          "Label": "Query 3",
+          "ScriptBlock": "Invoke-Query3"
+        },
+        {
+          "Index": "b",
+          "Label": "Back to Main Menu",
+          "ScriptBlock": "Show-InterfaceMenu -MenuName \"Main\""
+        }
+      ]
+    }
+  ]
 }

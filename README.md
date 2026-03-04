@@ -1,16 +1,10 @@
 <a id="readme-top"></a>
-
-<!-- PROJECT HEADER -->
-<br />
 <div align="center">
-  <a href="https://github.com/VividRock/Crust/">
-    <img src="assets/logo.png" alt="Logo" width="512" height="512">
-  </a>
-  <br />
+  <img src="assets/logo.png" alt="Alt text" width="512"/>
+<br>
 
 # Crust - A PowerShell CLI Menu Framework
 
-<!-- PROJECT SHIELDS -->
 [![Contributors][contributors-shield]][contributors-url]
 [![Forks][forks-shield]][forks-url]
 [![Stargazers][stars-shield]][stars-url]
@@ -19,7 +13,6 @@
 
 </div>
 
-<br>
 
 ## Table of Contents
 
@@ -28,14 +21,13 @@
   - [About](#about)
     - [Features](#features)
     - [Tech Stack](#tech-stack)
+    - [Screenshots](#screenshots)
   - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
-    - [Local Execution](#local-execution)
-    - [Remote Execution](#remote-execution)
   - [Roadmap](#roadmap)
-  - [Version History](#version-history)
+  - [Release History](#release-history)
   - [Contribution](#contribution)
     - [Top contributors:](#top-contributors)
   - [License](#license)
@@ -45,18 +37,30 @@
 
 ## About
 
-Crust is a simple, elegant solution for adding CLI menus to your PowerShell scripts, toolsets, and applications.
+Crust is a simple, elegant solution for adding a retro stylized, traversable, menu-driven interface to your PowerShell scripts, toolsets, and applications.
 
 ### Features
 
 - Simple, scalable framework
-- Can be run from code locally or executed using calls to the GitHub repo content
+- Can be easily integrated into any project or toolset
+- Language localizing feature that discovers the user's UI culture of PowerShell and then loads the matching json file with language localized content
 
 ### Tech Stack
 
 This framework utilizes the following languages and applications:
 
 [![PowerShell][PowerShell]][powershell-url]
+
+### Screenshots
+
+  <div align="left">
+    <a href="https://github.com/VividRock/Crust/">
+      <img src="assets/screenshot_mainmenu.png" alt="screenshot of main menu">
+    </a>
+  </div>
+  <br>
+
+This shows the main menu with a sample menu structure.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -72,42 +76,44 @@ Use the following section to learn how to start using the Crust framework to bui
 
 ### Installation
 
-TODO Add Content
+To utilize within your scripts and applications, you need the following folders and files
+
+> Note: The folders need to maintain their relative location to the main controller script.
+
+- configs
+- lang
+- modules
+- crust.ps1
+- LICENSE
+- README.md
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Usage
 
-### Local Execution
+The script provides a single parameter for explicitly defining the PSUICulture value if don't want to autodetect it.
 
-TODO Add content
-
-### Remote Execution
-
-TODO Add Content
-
-_For more examples, please refer to the [Documentation](https://example.com)_
+_For more examples, please refer to the [Documentation](https://github.com/VividRock/Crust/tree/main/docs)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Roadmap
 
-- [ ] Convert old code to official project
-- [ ] Implement a remote usage direct from GitHub Repo for simpler integration into user projects
+- [X] Convert old code to official project
 
 _For a full list of proposed features and issues, please refer to the [Issues](https://github.com/VividRock/Crust/issues)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
-## Version History
+## Release History
 
-This provides a brief review of the last two versions and an overview of their changes.
+This provides a brief review of the last two releases and an overview of their changes.
 
-| Version | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
+| Release | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
 |---------|-----------|-------------|-----------------|-------------------|---------|
 | 1.0.0   | Anorthose | 2026-03-02  | Dustin Estes    | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | Supported |
 
-_For a detailed list of all changes, please refer to the [Version History](https://github.com/VividRock/Crust/docs/vershionhistory.md)_
+_For a detailed list of all changes, please refer to the [Releases](https://github.com/VividRock/Crust/releases)_
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -161,6 +167,5 @@ Any special acknowledgements or recognitions that contributed to the success of 
 [license-shield]: https://img.shields.io/github/license/VividRock/Crust.svg?style=for-the-badge
 [license-url]: https://github.com/VividRock/Crust/blob/master/LICENSE
 [product-screenshot]: images/screenshot.png
-TODO Screenshot
 [PowerShell]: https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white
 [PowerShell-url]: https://learn.microsoft.com/en-us/powershell/
