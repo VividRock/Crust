@@ -43,9 +43,7 @@
 
 ## About
 
-Crust is a simple, elegant solution for adding CLI UI menus to your PowerShell scripts, toolsets, and applications.
-
-It provides a fun, retro stylized, traversable menu system that is easily configured using the config and language json files.
+Crust is a simple, elegant solution for adding a retro stylized, traversable, menu-driven interface to your PowerShell scripts, toolsets, and applications.
 
 ### Features
 
