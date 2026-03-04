@@ -12,7 +12,7 @@
     "Indention": "  "
   },
   "TitleBar": {
-    "Pattern": "  {{copyright}}                              DebugMode: {{debugmode}}    v{{version}}"
+    "Pattern": "  {{copyright}}                         DebugMode: {{debugmode}}    v{{version}}"
   },
   "Prompt": {
     "VerifyContinue": "Do you want to continue?",

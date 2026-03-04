@@ -57,7 +57,7 @@ function Write-Interface {
 		[string]  $IndentLevel = 0,
 		[Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 2)]
 		[ValidateSet("Black", "DarkBlue", "DarkGreen", "DarkCyan", "DarkRed", "DarkMagenta", "DarkYellow", "Gray", "DarkGray", "Blue", "Green", "Cyan", "Red", "Magenta", "Yellow", "White")]
-		[string]  $ForegroundColor = "White",
+		[string]  $ForegroundColor = "DarkGray",
 		[Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 3)]
 		[switch]  $NoNewLine,
 		[Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 4)]
@@ -167,7 +167,7 @@ function Show-InterfaceMenu {
 		Initialize-Interface
 
 		# Write- Message
-		Write-Interface -Message $Message -IndentLevel 1
+		Write-Interface -Message $MenuObject.Name -IndentLevel 1
 
 		# Add White Space
 		Write-Interface -Message $Interface.LineBreak -IndentLevel 0
