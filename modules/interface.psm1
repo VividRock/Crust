@@ -103,7 +103,7 @@ function Write-Interface {
 
 		# Write line break if specified
 		If ($LineBreakAfter -eq $true) {
-			Write-Interface -Message $Interface.LineBreak -IndentLevel 0
+			Write-Interface -Message $Localized.Component.LineBreak -IndentLevel 0
 		}
 	}
 
@@ -128,7 +128,7 @@ function Get-ConfirmationToContinue {
 
 			if ($InputValue -notin $Localized.Prompt.Response_VerifyYesNo_Yes, $Localized.Prompt.Response_VerifyYesNo_No) {
 				Write-Interface -Message $Localized.Prompt.Response_VerifyYesNo_IncorrectInput -IndentLevel 2
-				Write-Interface -Message $Localized.Component.Linebreak -IndentLevel 0
+				Write-Interface -Message $Localized.Component.LineBreak -IndentLevel 0
 			}
 		}
 		until (($InputValue -ne "") -and ($InputValue -in $Localized.Prompt.Response_VerifyYesNo_Yes, $Localized.Prompt.Response_VerifyYesNo_No))
@@ -161,7 +161,7 @@ function Show-InterfaceMenu {
 
 		# Clear Interface
 		Clear-Interface
-		Write-Interface -Message $Config_interface.Component.LineBreak -IndentLevel 0
+		Write-Interface -Message $Localized.Component.LineBreak -IndentLevel 0
 
 		# Initialize Interface
 		Initialize-Interface
