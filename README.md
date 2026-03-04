@@ -32,8 +32,6 @@
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
-    - [Local Execution](#local-execution)
-    - [Remote Execution](#remote-execution)
   - [Roadmap](#roadmap)
   - [Version History](#version-history)
   - [Contribution](#contribution)
@@ -45,12 +43,15 @@
 
 ## About
 
-Crust is a simple, elegant solution for adding CLI menus to your PowerShell scripts, toolsets, and applications.
+Crust is a simple, elegant solution for adding CLI UI menus to your PowerShell scripts, toolsets, and applications.
+
+It provides a fun, retro stylized, traversable menu system that is easily configured using the config and language json files.
 
 ### Features
 
 - Simple, scalable framework
-- Can be run from code locally or executed using calls to the GitHub repo content
+- Can be easily integrated into any project or toolset
+- Language localizing feature that discovers the user's UI culture of PowerShell and then loads the matching json file with language localized content
 
 ### Tech Stack
 
@@ -78,13 +79,7 @@ TODO Add Content
 
 ## Usage
 
-### Local Execution
-
 TODO Add content
-
-### Remote Execution
-
-TODO Add Content
 
 _For more examples, please refer to the [Documentation](https://example.com)_
 
