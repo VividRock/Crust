@@ -23,7 +23,7 @@ param(
 
 Import-Module -Name ".\modules\crust.psm1" -Force
 Initialize-Crust
-Convert-Language
+Set-Tokens
 
 #EndRegion Initialize
 #--------------------------------------------------------------------------------------------

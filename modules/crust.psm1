@@ -96,7 +96,7 @@ function Initialize-Crust {
 
 }
 
-function Convert-Language {
+function Set-Tokens {
   # Configs
   New-Variable -Name "Language" -Value (Get-Content -Path "$($Config_initialize.Paths.Languages)$($UICulture)\$($UICulture).json" -Raw | ConvertFrom-Json) -Scope Global -Force
 
@@ -348,4 +348,3 @@ function Get-InterfaceMenuInput {
 
   }
 }
-
