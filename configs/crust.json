@@ -7,10 +7,10 @@
     "Links": "https://github.com/VividRock/Crust"
   },
   "Metadata": {
-    "StartDateTime": "[Derived from initialize.psm1]",
-    "CompleteDateTime": "[Derived from initialize.psm1]",
-    "CompleteTimeSpan": "[Derived from initialize.psm1]",
-    "ExecutionUser": "[Derived from initialize.psm1]",
+    "StartDateTime": "",
+    "CompleteDateTime": "",
+    "CompleteTimeSpan": "",
+    "ExecutionUser": "",
     "ScriptResult": "",
     "ScriptResultCode": ""
   },

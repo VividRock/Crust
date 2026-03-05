@@ -9,7 +9,7 @@ param(
     HelpMessage = "Specify an explicit language code if you want to override the user's preferred language.",
     ParameterSetName = "Language")]
     [ValidatePattern("[a-z]{2}-[A-Z]{2}")]
-  [string]$Language = $($PSUICulture)
+  [string]$UICulture = $($PSUICulture)
 )
 
 #EndRegion Parameters
@@ -21,7 +21,9 @@ param(
 #--------------------------------------------------------------------------------------------
 #Region Initialize
 
-Import-Module -Name ".\modules\initialize.psm1" -Force
+Import-Module -Name ".\modules\crust.psm1" -Force
+Initialize-Crust
+Convert-Language
 
 #EndRegion Initialize
 #--------------------------------------------------------------------------------------------
@@ -34,10 +36,10 @@ Import-Module -Name ".\modules\initialize.psm1" -Force
 
 Out-File -InputObject "  Show Main Menu" @Params_Logging
 
-$Menu_Choice = "Main"
+$Menu = "Main"
 Clear-Interface
-while ($Menu_Choice -ne "Quit") {
-  $Menu_Choice = Show-InterfaceMenu -MenuName $Menu_Choice
+while ($Menu -ne "Quit") {
+  $Menu = Show-InterfaceMenu -MenuName $Menu
 }
 
 Out-File -InputObject "    - Complete" @Params_Logging
