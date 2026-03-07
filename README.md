@@ -139,7 +139,7 @@ If you have a suggestion that would make this better, please fork the repo and c
 
 ## License
 
-Distributed under the GNU General Public License v3.0. See `license.txt` for more information.
+Copyright (C) VividRock LLC - All Rights Reserved
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
