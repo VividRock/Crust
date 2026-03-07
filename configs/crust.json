@@ -31,5 +31,13 @@
     "RunAsAdminRequired": false,
     "DebugMode": false,
     "InterfaceSleepMilliseconds": 0
+  },
+  "Security": {
+    "Authentication": {
+      "Enabled": true,
+      "LaunchPoint": "AtStartup",
+      "Context": "Machine",
+      "Method": "Popup"
+    }
   }
 }

@@ -20,6 +20,22 @@
     "Response_VerifyYesNo_No": "No",
     "Response_VerifyYesNo_IncorrectInput": "Invalid input. Please enter Yes or No."
   },
+  "Security": {
+    "Authentication": {
+      "SectionTitle": "Authentication",
+      "UserCancelled": "User cancelled the authentication process. Exiting Crust.",
+      "FailedAuthentication": "The provided credentials failed authentication.",
+      "Popup": {
+        "Message_01": "Presenting popup window for authentication",
+        "Title": "Crust  |  VividRock",
+        "Body": "Enter your credentials to validate usage of the Crust interface."
+      },
+      "Inline": {
+        "Username": "Username",
+        "Password": "Password"
+      }
+    }
+  },
   "DynamicToken": {
     "copyright": "$Crust.Application.Copyright",
     "debugmode": "if ($($Crust.Settings.DebugMode)) { \"Enabled \" } else { \"Disabled\" }",

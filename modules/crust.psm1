@@ -106,11 +106,13 @@ function Initialize-Interface {
   param (
     [Parameter(Mandatory = $false, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 1)]
     [ValidatePattern("[0,10000]")]
-    [string]  $SleepMilliseconds = 100
+    [string]  $SleepMilliseconds = $Crust.Settings.InterfaceSleepMilliseconds
   )
 
   begin {
-
+    # Reset Interface
+    Clear-Interface
+    Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
   }
 
   process {
@@ -268,17 +270,9 @@ function Show-InterfaceMenu {
   )
 
   begin {
-    # Clear Interface
-    Clear-Interface
-    Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
-
     # Initialize Interface
     Initialize-Interface
-
-    # Write- Message
     Write-Interface -Message $Menu.Name -IndentLevel 1
-
-    # Add White Space
     Write-Interface -Message $Interface.LineBreak -IndentLevel 0
 
     # Set incremental integer for ensuring only one divider line is written to the screen
@@ -340,5 +334,113 @@ function Get-InterfaceMenuInput {
 
   end {
 
+  }
+}
+
+function Get-UserCredential {
+  param (
+    [Parameter(Mandatory = $true, ValueFromPipeline = $false, ValueFromPipelineByPropertyName = $false, Position = 0)]
+    [string] $LaunchPoint,
+    [Parameter(Mandatory = $false, ValueFromPipeline = $false, ValueFromPipelineByPropertyName = $false, Position = 1)]
+    [switch] $Validate
+  )
+
+  begin {
+    # Load the required .NET assembly
+    Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+  }
+
+  process {
+    # Get Credential
+    switch ($Crust.Security.Authentication.Method) {
+      { $_ -eq "Popup" } {
+        Write-Interface -Message $Language.Security.Authentication.Popup.Message_01 -IndentLevel 2
+        $Credential = $host.ui.PromptForCredential($Language.Security.Authentication.Popup.Title, $Language.Security.Authentication.Body, "", "")
+      }
+      { $_ -eq "Inline" } {
+        # Prompt for Inputs
+        $Username = Read-Host -Prompt "    $($Language.Security.Authentication.Inline.Username)"
+        $Password = Read-Host -Prompt "    $($Language.Security.Authentication.Inline.Password)" -AsSecureString
+
+        # Create Credential Object
+        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $Password
+
+        # Safely Discard Secure String
+        $Password.Dispose()
+      }
+      Default {
+        $Credential = $host.ui.PromptForCredential($Language.Security.Authentication.Popup.Title, $Language.Security.Authentication.Body, "", "")
+      }
+    }
+
+    # Process Credential Object
+    if ($Credential -in "", $null) {
+      # Write to Interface
+      Write-Interface -Message $Language.Security.Authentication.UserCancelled -IndentLevel 2
+    }
+    else {
+      # Write to Interface
+      Write-Interface -Message "$($Language.Security.Authentication.Inline.Username): $($Credential.Username)" -IndentLevel 3
+      Write-Interface -Message "$($Language.Security.Authentication.Inline.Password): $($Credential.Password)" -IndentLevel 3
+
+      # Validate Credential
+      if (($credential -notin "", $null) -and ($Validate)) {
+        $Validation = Confirm-UserCredential -Credential $Credential
+      }
+    }
+  }
+
+  end {
+    # Process Return
+    if ($Credential -in "", $null) {
+      Return "UserCancelled"
+    }
+    elseif ($Validation -eq $false) {
+      Return $false
+    }
+    elseif ($Credential.GetType().Name -eq "PSCredential") {
+      Return $Credential
+    }
+    else {
+      Return $false
+    }
+  }
+}
+
+function Confirm-UserCredential {
+  param (
+    [Parameter(Mandatory = $true, ValueFromPipeline = $false, ValueFromPipelineByPropertyName = $false, Position = 0)]
+    [pscredential]$Credential
+  )
+
+  begin {
+
+  }
+
+  process {
+    # Validate Credential
+    switch ($Crust.Security.Authentication.Context) {
+      { $_ -eq "Machine" } {
+        $Validation = [System.DirectoryServices.AccountManagement.PrincipalContext]::new('Machine').ValidateCredentials($Credential.UserName, $Credential.GetNetworkCredential().Password)
+      }
+      { $_ -eq "Domain" } {
+        $DomainName = $env:USERDOMAIN
+        $Validation = [System.DirectoryServices.AccountManagement.PrincipalContext]::new([System.DirectoryServices.AccountManagement.ContextType]::Domain, $DomainName).ValidateCredentials($Credential.UserName, $Credential.GetNetworkCredential().Password, [System.DirectoryServices.AccountManagement.ContextOptions]::Negotiate)
+      }
+      { $_ -eq "ApplicationDirectory" } {
+        # TODO Add this authentication context type
+      }
+      Default {}
+    }
+  }
+
+  end {
+    # Validate
+    if ($Validation) {
+      Return $true
+    }
+    else {
+      Return $false
+    }
   }
 }
