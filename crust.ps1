@@ -6,10 +6,18 @@
 [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'Low', DefaultParameterSetName = "Default")]
 param(
   [Parameter(Mandatory = $false,
+    HelpMessage = "Specify the name of a menu json file.",
+    ParameterSetName = "Default")]
+  [string]$File = "menu.json",
+  [Parameter(Mandatory = $false,
+    HelpMessage = "Specify the name of a menu in the json file to load with Crust.",
+    ParameterSetName = "Default")]
+  [string]$Name = "Main",
+  [Parameter(Mandatory = $false,
     HelpMessage = "Specify an explicit language code if you want to override the user's preferred language.",
     ParameterSetName = "Language")]
-    [ValidatePattern("[a-z]{2}-[A-Z]{2}")]
-  [string]$Language = $($PSUICulture)
+  [ValidatePattern("[a-z]{2}-[A-Z]{2}")]
+  [string]$UICulture = $($PSUICulture)
 )
 
 #EndRegion Parameters
@@ -21,9 +29,50 @@ param(
 #--------------------------------------------------------------------------------------------
 #Region Initialize
 
-Import-Module -Name ".\modules\initialize.psm1" -Force
+# Initialize Application
+Import-Module -Name ".\modules\crust.psm1" -Force
+Initialize-Crust
+Set-Tokens
+
+# Initialize Interface
+Clear-Interface
+Initialize-Interface
+Write-Interface -Message $Language.Security.Authentication.SectionTitle -IndentLevel 1
+Write-Interface -Message $Interface.LineBreak -IndentLevel 0
 
 #EndRegion Initialize
+#--------------------------------------------------------------------------------------------
+
+
+#--------------------------------------------------------------------------------------------
+# Get Credential Object: AtStartup
+#--------------------------------------------------------------------------------------------
+#Region Get Credential Object: AtStartup
+Out-File -InputObject "  Get Credential Object: AtStartup" @Params_Logging
+
+if (($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust.Security.Authentication.LaunchPoint -eq "AtStartup")) {
+  do {
+    $Crust_Credential = Get-UserCredential -LaunchPoint $Crust.Security.Authentication.LaunchPoint  -Validate
+
+    # Process Retun
+    if ($Crust_Credential -eq $false) {
+      Write-Interface -Message $Language.Security.Authentication.FailedAuthentication -IndentLevel 3
+    }
+  } until (
+    ($Crust_Credential -ne $false) -or ($Crust_Credential -eq "UserCancelled")
+  )
+}
+elseif ($Crust.Security.Authentication.Enabled -eq $false) {
+  Out-File -InputObject "    - Skipped: Authentication not enabled in the crust.json config file " @Params_Logging
+}
+else {
+  Out-File -InputObject "    - Skipped: Authentication LaunchPoint not configured for AtStartup in the crust.json config file" @Params_Logging
+}
+
+Out-File -InputObject "    - Complete" @Params_Logging
+Out-File -InputObject " " @Params_Logging
+
+#EndRegion Get Credential Object: AtStartup
 #--------------------------------------------------------------------------------------------
 
 
@@ -34,10 +83,18 @@ Import-Module -Name ".\modules\initialize.psm1" -Force
 
 Out-File -InputObject "  Show Main Menu" @Params_Logging
 
-$Menu_Choice = "Main"
-Clear-Interface
-while ($Menu_Choice -ne "Quit") {
-  $Menu_Choice = Show-InterfaceMenu -MenuName $Menu_Choice
+# Show Menu
+if ($Crust_Credential -eq "UserCancelled") {
+  <# Action to perform if the condition is true #>
+}
+elseif ((($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust_Credential)) -or ($Crust.Security.Authentication.Enabled -eq $false)) {
+  $Menu = Get-InterfaceMenu -File $File
+  while ($Name -ne "Quit") {
+    $Name = Show-InterfaceMenu -Menu ($Menu | Where-Object -Property "Name" -eq $Name) -Name $Name
+  }
+}
+else {
+  # Do Nothing
 }
 
 Out-File -InputObject "    - Complete" @Params_Logging
@@ -53,18 +110,18 @@ Out-File -InputObject " " @Params_Logging
 #Region Footer
 
 # Gather Data
-$Config_initialize.Metadata.ScriptResult = "Success"
-$Config_initialize.Metadata.ScriptResultCode = 0
-$Config_initialize.Metadata.CompleteDateTime = Get-Date
-$Config_initialize.Metadata.CompleteTimeSpan = New-TimeSpan -Start $Config_initialize.Metadata.StartDateTime -End $Config_initialize.Metadata.CompleteDateTime
+$Crust.Metadata.ScriptResult = "Success"
+$Crust.Metadata.ScriptResultCode = 0
+$Crust.Metadata.CompleteDateTime = Get-Date
+$Crust.Metadata.CompleteTimeSpan = New-TimeSpan -Start $Crust.Metadata.StartDateTime -End $Crust.Metadata.CompleteDateTime
 
 # Output
 Out-File -InputObject " " @Params_Logging
 Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-Out-File -InputObject "  Script Result: $($Config_initialize.Metadata.ScriptResult)" @Params_Logging
-Out-File -InputObject "  Script Started: $($Config_initialize.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-Out-File -InputObject "  Script Completed: $($Config_initialize.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-Out-File -InputObject "  Total Time: $($Config_initialize.Metadata.CompleteTimeSpan.Days) days, $($Config_initialize.Metadata.CompleteTimeSpan.Hours) hours, $($Config_initialize.Metadata.CompleteTimeSpan.Minutes) minutes, $($Config_initialize.Metadata.CompleteTimeSpan.Seconds) seconds, $($Config_initialize.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @Params_Logging
+Out-File -InputObject "  Script Result: $($Crust.Metadata.ScriptResult)" @Params_Logging
+Out-File -InputObject "  Script Started: $($Crust.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
+Out-File -InputObject "  Script Completed: $($Crust.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
+Out-File -InputObject "  Total Time: $($Crust.Metadata.CompleteTimeSpan.Days) days, $($Crust.Metadata.CompleteTimeSpan.Hours) hours, $($Crust.Metadata.CompleteTimeSpan.Minutes) minutes, $($Crust.Metadata.CompleteTimeSpan.Seconds) seconds, $($Crust.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @Params_Logging
 Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
 Out-File -InputObject "  End of Script" @Params_Logging
 Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
@@ -72,4 +129,4 @@ Out-File -InputObject "---------------------------------------------------------
 #EndRegion Footer
 #--------------------------------------------------------------------------------------------
 
-Return $Config_initialize.Metadata.ScriptResultCode
+Return $Crust.Metadata.ScriptResultCode

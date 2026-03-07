@@ -1,16 +1,16 @@
 {
   "Application": {
     "Name": "Crust",
-    "Version": "1.1.0",
+    "Version": "1.2.0",
     "Company": "VividRock",
     "Copyright": "Copyright (c) 2012-2026 VividRock | All Rights Reserved",
     "Links": "https://github.com/VividRock/Crust"
   },
   "Metadata": {
-    "StartDateTime": "[Derived from initialize.psm1]",
-    "CompleteDateTime": "[Derived from initialize.psm1]",
-    "CompleteTimeSpan": "[Derived from initialize.psm1]",
-    "ExecutionUser": "[Derived from initialize.psm1]",
+    "StartDateTime": "",
+    "CompleteDateTime": "",
+    "CompleteTimeSpan": "",
+    "ExecutionUser": "",
     "ScriptResult": "",
     "ScriptResultCode": ""
   },
@@ -31,5 +31,13 @@
     "RunAsAdminRequired": false,
     "DebugMode": false,
     "InterfaceSleepMilliseconds": 0
+  },
+  "Security": {
+    "Authentication": {
+      "Enabled": true,
+      "LaunchPoint": "AtStartup",
+      "Context": "Machine",
+      "Method": "Popup"
+    }
   }
 }
