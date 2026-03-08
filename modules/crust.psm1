@@ -3,6 +3,7 @@ function Initialize-Crust {
   New-Variable -Name "Crust" -Value (Get-Content -Path ".\configs\crust.json" -Raw | ConvertFrom-Json) -Scope Global -Force
 
   # Metadata
+  $Crust.Metadata.StartDateTime = (Get-Date)
   $Crust.Metadata.CompleteDateTime = $null
   $Crust.Metadata.CompleteTimeSpan = $null
   $Crust.Metadata.ExecutionUser = $([System.Security.Principal.WindowsIdentity]::GetCurrent())
@@ -13,9 +14,8 @@ function Initialize-Crust {
     Set-Variable -Name $Item.Name -Value $Item.Value -Scope Global -Force
   }
 
- Write-CrustLog -Initialize
-
-  # Write Header
+  # Start Logging
+  Write-CrustLog -Initialize
   Write-CrustLog -Header
 
   # Parameters
