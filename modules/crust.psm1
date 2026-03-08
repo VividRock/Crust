@@ -3,7 +3,6 @@ function Initialize-Crust {
   New-Variable -Name "Crust" -Value (Get-Content -Path ".\configs\crust.json" -Raw | ConvertFrom-Json) -Scope Global -Force
 
   # Metadata
-  $Global:Crust.Metadata.StartDateTime = (Get-Date)
   $Crust.Metadata.CompleteDateTime = $null
   $Crust.Metadata.CompleteTimeSpan = $null
   $Crust.Metadata.ExecutionUser = $([System.Security.Principal.WindowsIdentity]::GetCurrent())
@@ -14,12 +13,7 @@ function Initialize-Crust {
     Set-Variable -Name $Item.Name -Value $Item.Value -Scope Global -Force
   }
 
-  # Logging
-  $Global:Params_Logging = @{
-    FilePath = "Filesystem::$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
-    Append   = $true
-  }
-  New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
+ Write-CrustLog -Initialize
 
   # Write Header
   Write-CrustLog -Header
@@ -440,26 +434,41 @@ function Confirm-UserCredential {
 
 function Write-CrustLog {
   param (
-    [Parameter(Mandatory = $true,
-      HelpMessage = "Writes the log footer output.")]
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Initialize the log.")]
+    [switch]$Initialize,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Writes the log header.")]
+    [switch]$Header,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Writes the log footer.")]
     [switch]$Footer
   )
 
   begin {
-
+    # Initialize
+    if ($Initialize) {
+      $Global:Params_Logging = @{
+        FilePath = "Filesystem::$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
+        Append   = $true
+      }
+      New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
+    }
   }
 
   process {
     # Write Header
-    Out-File -InputObject " " @Params_Logging
-    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-    Out-File -InputObject "  $($Crust.Application.Name)" @Params_Logging
-    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-    foreach ($Item in ($Crust.Application.PSObject.Properties | Where-Object -Property "Name" -ne "Name")) {
-      Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
+    if ($Header) {
+      Out-File -InputObject " " @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      Out-File -InputObject "  $($Crust.Application.Name)" @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      foreach ($Item in ($Crust.Application.PSObject.Properties | Where-Object -Property "Name" -ne "Name")) {
+        Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
+      }
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      Out-File -InputObject " " @Params_Logging
     }
-    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-    Out-File -InputObject " " @Params_Logging
 
     # Write Footer
     if ($Footer) {
