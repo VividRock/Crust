@@ -103,30 +103,6 @@ Out-File -InputObject " " @Params_Logging
 #EndRegion Show Main Menu
 #--------------------------------------------------------------------------------------------
 
-
-#--------------------------------------------------------------------------------------------
-# Footer
-#--------------------------------------------------------------------------------------------
-#Region Footer
-
-# Gather Data
-$Crust.Metadata.ScriptResult = "Success"
-$Crust.Metadata.ScriptResultCode = 0
-$Crust.Metadata.CompleteDateTime = Get-Date
-$Crust.Metadata.CompleteTimeSpan = New-TimeSpan -Start $Crust.Metadata.StartDateTime -End $Crust.Metadata.CompleteDateTime
-
-# Output
-Out-File -InputObject " " @Params_Logging
-Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-Out-File -InputObject "  Script Result: $($Crust.Metadata.ScriptResult)" @Params_Logging
-Out-File -InputObject "  Script Started: $($Crust.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-Out-File -InputObject "  Script Completed: $($Crust.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-Out-File -InputObject "  Total Time: $($Crust.Metadata.CompleteTimeSpan.Days) days, $($Crust.Metadata.CompleteTimeSpan.Hours) hours, $($Crust.Metadata.CompleteTimeSpan.Minutes) minutes, $($Crust.Metadata.CompleteTimeSpan.Seconds) seconds, $($Crust.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @Params_Logging
-Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-Out-File -InputObject "  End of Script" @Params_Logging
-Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-
-#EndRegion Footer
-#--------------------------------------------------------------------------------------------
+Write-CrustLog -Footer
 
 Return $Crust.Metadata.ScriptResultCode

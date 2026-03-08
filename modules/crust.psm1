@@ -21,15 +21,8 @@ function Initialize-Crust {
   }
   New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
 
-  Out-File -InputObject " " @Params_Logging
-  Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-  Out-File -InputObject "  $($Crust.Application.Name)" @Params_Logging
-  Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-  foreach ($Item in ($Crust.Application.PSObject.Properties | Where-Object -Property "Name" -ne "Name")) {
-    Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
-  }
-  Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-  Out-File -InputObject " " @Params_Logging
+  # Write Header
+  Write-CrustLog -Header
 
   # Parameters
   Out-File -InputObject "  Initialize" @Params_Logging
@@ -442,5 +435,54 @@ function Confirm-UserCredential {
     else {
       Return $false
     }
+  }
+}
+
+function Write-CrustLog {
+  param (
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Writes the log footer output.")]
+    [switch]$Footer
+  )
+
+  begin {
+
+  }
+
+  process {
+    # Write Header
+    Out-File -InputObject " " @Params_Logging
+    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    Out-File -InputObject "  $($Crust.Application.Name)" @Params_Logging
+    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    foreach ($Item in ($Crust.Application.PSObject.Properties | Where-Object -Property "Name" -ne "Name")) {
+      Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
+    }
+    Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    Out-File -InputObject " " @Params_Logging
+
+    # Write Footer
+    if ($Footer) {
+      # Gather Data
+      $Crust.Metadata.ScriptResult = "Success"
+      $Crust.Metadata.ScriptResultCode = 0
+      $Crust.Metadata.CompleteDateTime = Get-Date
+      $Crust.Metadata.CompleteTimeSpan = New-TimeSpan -Start $Crust.Metadata.StartDateTime -End $Crust.Metadata.CompleteDateTime
+
+      # Output
+      Out-File -InputObject " " @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      Out-File -InputObject "  Script Result: $($Crust.Metadata.ScriptResult)" @Params_Logging
+      Out-File -InputObject "  Script Started: $($Crust.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
+      Out-File -InputObject "  Script Completed: $($Crust.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
+      Out-File -InputObject "  Total Time: $($Crust.Metadata.CompleteTimeSpan.Days) days, $($Crust.Metadata.CompleteTimeSpan.Hours) hours, $($Crust.Metadata.CompleteTimeSpan.Minutes) minutes, $($Crust.Metadata.CompleteTimeSpan.Seconds) seconds, $($Crust.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      Out-File -InputObject "  End of Script" @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    }
+  }
+
+  end {
+
   }
 }
