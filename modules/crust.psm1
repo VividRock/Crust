@@ -19,40 +19,40 @@ function Initialize-Crust {
   Write-CrustLog -Header
 
   # Parameters
-  Out-File -InputObject "  Initialize" @Params_Logging
-  Out-File -InputObject "    - Parameters" @Params_Logging
+  Write-CrustLog -Message "  Initialize"
+  Write-CrustLog -Message "    - Parameters"
   foreach ($Item in $PSBoundParameters.GetEnumerator()) {
-    Out-File -InputObject "        $($Item.Key.PadRight(($PSBoundParameters.Keys | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
+    Write-CrustLog -Message "        $($Item.Key.PadRight(($PSBoundParameters.Keys | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)"
   }
 
   # Import Modules
-  Out-File -InputObject "    - Modules" @Params_Logging
+  Write-CrustLog -Message "    - Modules"
 
   if (Test-Path -Path $Crust.Paths.Modules) {
     foreach ($Item in (Get-ChildItem -Path $Crust.Paths.Modules -Recurse -Filter "*.psm1" | Where-Object -Property "Name" -ne "crust.psm1")) {
       try {
-        Out-File -InputObject "        $($Item.Name)" @Params_Logging
-        Out-File -InputObject "          Path: $($Item.FullName)" @Params_Logging
+        Write-CrustLog -Message "        $($Item.Name)"
+        Write-CrustLog -Message "          Path: $($Item.FullName)"
 
         $Temp_Result = Import-Module $Item.FullName -Scope Global -Force -PassThru
         foreach ($Item in $Temp_Result.ExportedCommands.GetEnumerator()) {
-          Out-File -InputObject "            $($Item.Key)" @Params_Logging
+          Write-CrustLog -Message "            $($Item.Key)"
         }
-        Out-File -InputObject "          Status: Success" @Params_Logging
+        Write-CrustLog -Message "          Status: Success"
       }
       catch {
-        Out-File -InputObject "          Status: Failure" @Params_Logging
+        Write-CrustLog -Message "          Status: Failure"
         Throw "Failure - $($Error.Exception.Message)"
       }
     }
   }
   else {
-    Out-File -InputObject "          Status: Failure" @Params_Logging
+    Write-CrustLog -Message "          Status: Failure"
     Throw "Failure - ($Error.Exception.Message)"
   }
 
-  Out-File -InputObject "    - Complete" @Params_Logging
-  Out-File -InputObject " " @Params_Logging
+  Write-CrustLog -Message "    - Complete"
+  Write-CrustLog -Message " "
 
 }
 
@@ -433,16 +433,25 @@ function Confirm-UserCredential {
 }
 
 function Write-CrustLog {
+  [CmdletBinding(DefaultParameterSetName = "Message")]
   param (
     [Parameter(Mandatory = $false,
-      HelpMessage = "Initialize the log.")]
+      HelpMessage = "Initialize the log.",
+      ParameterSetName = "Initialize")]
     [switch]$Initialize,
     [Parameter(Mandatory = $false,
-      HelpMessage = "Writes the log header.")]
+      HelpMessage = "Writes the log header.",
+      ParameterSetName = "Header")]
     [switch]$Header,
     [Parameter(Mandatory = $false,
-      HelpMessage = "Writes the log footer.")]
-    [switch]$Footer
+      HelpMessage = "Writes the log footer.",
+      ParameterSetName = "Footer")]
+    [switch]$Footer,
+
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Writes the log message.",
+      ParameterSetName = "Message")]
+    [string]$Message
   )
 
   begin {
@@ -453,6 +462,7 @@ function Write-CrustLog {
         Append   = $true
       }
       New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
+      Write-CrustLog -Message ""
     }
   }
 
@@ -488,6 +498,11 @@ function Write-CrustLog {
       Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
       Out-File -InputObject "  End of Script" @Params_Logging
       Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    }
+
+    # Write Message
+    if ($Message) {
+      Out-File -InputObject $Message @Params_Logging
     }
   }
 

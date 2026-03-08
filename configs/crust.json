@@ -15,7 +15,7 @@
     "ScriptResultCode": ""
   },
   "Logging": {
-    "Directory": ".\\Logs\\",
+    "Directory": ".\\logs\\",
     "TimestampFormat": "yyyy-MM-dd_HHmmss",
     "Filename": "_Crust.log"
   },
