@@ -1,5 +1,5 @@
 param (
-  [string]$LocalPath = "$($env:TEMP)",
+  [string]$LogDir = "$($env:TEMP)",
   [string]$CrustUri,
   [string]$LangUri,
   [string]$MenuUri,
@@ -10,4 +10,4 @@ param (
 Import-Module -Name ".\modules\crust.psm1" -Force
 
 # Invoke Function
-Invoke-CrustMenu -LocalPath $LocalPath -CrustUri $CrustUri -LangUri $LangUri -MenuUri $MenuUri -MenuName $MenuName
+Invoke-CrustMenu -LogDir $LogDir -CrustUri $CrustUri -LangUri $LangUri -MenuUri $MenuUri -MenuName $MenuName

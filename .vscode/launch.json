@@ -4,15 +4,12 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
-
     {
       "name": "Crust: Local",
       "type": "PowerShell",
       "request": "launch",
       "script": ".\\tests\\Test_Invoke-CrustMenu.ps1",
       "args": [
-        "-LocalPath",
-        ".\\temp",
         "-CrustUri",
         ".\\configs\\crust.json",
         "-LangUri",
@@ -20,7 +17,9 @@
         "-MenuUri",
         ".\\configs\\menu.json",
         "-MenuName",
-        "Main"
+        "Main",
+        "-LogDir",
+        ".\\logs"
       ]
     },
     {
@@ -29,8 +28,6 @@
       "request": "launch",
       "script": ".\\tests\\Test_Invoke-CrustMenu.ps1",
       "args": [
-        "-LocalPath",
-        ".\\temp",
         "-CrustUri",
         "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/crust.json",
         "-LangUri",
@@ -38,7 +35,9 @@
         "-MenuUri",
         "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/menu.json",
         "-MenuName",
-        "Main"
+        "Main",
+        "-LogDir",
+        ".\\logs"
       ]
     }
   ]
