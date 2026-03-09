@@ -78,16 +78,7 @@ Use the following section to learn how to start using the Crust framework to bui
 
 ### Installation
 
-To utilize within your scripts and applications, you need the following folders and files
-
-> Note: The folders need to maintain their relative location to the main controller script.
-
-- configs
-- lang
-- modules
-- crust.ps1
-- LICENSE
-- README.md
+See the usage section below.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -139,11 +130,11 @@ _For a full list of proposed features and issues, please refer to the [Issues](h
 
 This provides a brief review of the last two releases and an overview of their changes.
 
-| Release | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
-|---------|-----------|-------------|-----------------|-------------------|---------|
-| 1.2.0   | Cairngorm | 2026-03-07  | Dustin Estes    | #4 Enhancement: Compact Module Files, #2 Feature: Authentication | Latest |
-| 1.1.0   | Bloodstone | 2026-03-04 | Dustin Estes    | cleaned up code, updated description, updated documentation, added screenshot for readme, fixed output formatting issues, fixed issues found by agent review | End-of-Life |
-| 1.0.0   | Anorthose | 2026-03-02  | Dustin Estes    | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | End-of-Life |
+| Release | Codename   | Date       | Contributor(s) | Brief Description                                                                                                                                                           | Status      |
+| ------- | ---------- | ---------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| 1.2.0   | Cairngorm  | 2026-03-07 | Dustin Estes   | #4 Enhancement: Compact Module Files, #2 Feature: Authentication                                                                                                            | Latest      |
+| 1.1.0   | Bloodstone | 2026-03-04 | Dustin Estes   | cleaned up code, updated description, updated documentation, added screenshot for readme, fixed output formatting issues, fixed issues found by agent review                | End-of-Life |
+| 1.0.0   | Anorthose  | 2026-03-02 | Dustin Estes   | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | End-of-Life |
 
 
 _For a detailed list of all changes, please refer to the [Releases](https://github.com/VividRock/Crust/releases)_
@@ -198,7 +189,7 @@ Any special acknowledgements or recognitions that contributed to the success of 
 [issues-shield]: https://img.shields.io/github/issues/VividRock/Crust.svg?style=for-the-badge
 [issues-url]: https://github.com/VividRock/Crust/issues
 [license-shield]: https://img.shields.io/github/license/VividRock/Crust.svg?style=for-the-badge
-[license-url]: https://github.com/VividRock/Crust/blob/master/LICENSE
+[license-url]: https://github.com/VividRock/Crust/
 [product-screenshot]: images/screenshot.png
 [PowerShell]: https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white
 [PowerShell-url]: https://learn.microsoft.com/en-us/powershell/
