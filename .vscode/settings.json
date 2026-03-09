@@ -22,7 +22,7 @@
   "files.insertFinalNewline": true, // Ensure files end with a newline
   "files.trimFinalNewlines": true, // Trim extra newlines at the end of files
   // PowerShell extension specific formatting rules
-  "powershell.codeFormatting.ignoreOneLineBlock": false, // Format one-line blocks like "if ($true) { ... }"
+  "powershell.codeFormatting.ignoreOneLineBlock": true, // Format one-line blocks like "if ($true) { ... }"
   "powershell.codeFormatting.newLineAfterOpenBrace": true,
   "powershell.codeFormatting.newLineAfterCloseBrace": true,
   "powershell.codeFormatting.useCorrectCasing": false, // Use correct casing for cmdlet names
