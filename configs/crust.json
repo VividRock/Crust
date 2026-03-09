@@ -24,8 +24,11 @@
     "LangUri": "set by Invoke-Crust parameter at runtime",
     "MenuUri": "set by Invoke-Crust parameter at runtime"
   },
-  "Preferences": {
-    "ErrorActionPreference": "Stop"
+  "PowerShell": {
+    "MinimumVersion": "7.0.0",
+    "Preferences": {
+      "ErrorActionPreference": "Stop"
+    }
   },
   "Settings": {
     "RunAsAdminRequired": false,

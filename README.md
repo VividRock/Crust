@@ -72,9 +72,9 @@ Use the following section to learn how to start using the Crust framework to bui
 
 ### Prerequisites
 
-| Prerequisite    | Version |
-|-----------------|---------|
-| PowerShell      | >= 5.1  |
+| Prerequisite | Version |
+| ------------ | ------- |
+| PowerShell   | >= 7.0  |
 
 ### Installation
 

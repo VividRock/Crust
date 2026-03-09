@@ -160,9 +160,11 @@ function Initialize-Crust {
   $Crust.Metadata.CompleteTimeSpan = $null
   $Crust.Metadata.ExecutionUser = $([System.Security.Principal.WindowsIdentity]::GetCurrent())
 
-  # Preferences
-  $ErrorActionPreference = "Stop"
-  foreach ($Item in $Crust.Preferences.PSObject.Properties) {
+  # PowerShell Environment
+  if ($PSVersionTable.PSVersion -lt $Crust.PowerShell.MinimumVersion) {
+    throw "The current version of PowerShell ($($PSVersionTable.PSVersion)) is less than the minimum version required by Crust ($($Curst.PowerShell.MinimumVersion))"
+  }
+  foreach ($Item in $Crust.PowerShell.Preferences.PSObject.Properties) {
     Set-Variable -Name $Item.Name -Value $Item.Value -Scope Global -Force
   }
 
