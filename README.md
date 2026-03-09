@@ -26,6 +26,8 @@
     - [Prerequisites](#prerequisites)
     - [Installation](#installation)
   - [Usage](#usage)
+    - [Local Execution](#local-execution)
+    - [Remote Execution](#remote-execution)
   - [Roadmap](#roadmap)
   - [Release History](#release-history)
   - [Contribution](#contribution)
@@ -91,7 +93,34 @@ To utilize within your scripts and applications, you need the following folders 
 
 ## Usage
 
-The script provides a single parameter for explicitly defining the PSUICulture value if don't want to autodetect it.
+### Local Execution
+
+This scenario involves downloading the following files from the repo and putting them into your own project.
+
+1. Download the following files
+    ```
+    - .\modules\crust.psm1
+    - .\configs\crust.json
+    - .\lang\en-US\en-US.json
+    - .\configs\menu.json
+    ```
+2. Add them to any part of your project
+3. Import the crust.psm1 module within your own project
+4. Call the Invoke-CrustMenu function passing the relative/absolute paths to the remaining files
+
+### Remote Execution
+
+This scenario allows you to associate your menu in another repo or pull it from a web address and share.
+
+> This is helpful when you may want to launch the menu for your toolset or project from an environment and you don't want to download all the content or use tools to localize on-demand.
+
+1. Add the following snippet to your project to download the module and import
+    ```powershell
+    Invoke-WebRequest -Uri $Params_Crust.ModuleUrl -OutFile "$($env:TEMP)\crust.psm1"
+    Import-Module -Name "$($env:TEMP)\crust.psm1 -Force"
+    ```
+2. Call the Invoke-CrustMenu function passing the web/repo paths to the remaining files
+
 
 _For more examples, please refer to the [Documentation](https://github.com/VividRock/Crust/tree/main/docs)_
 
@@ -100,6 +129,7 @@ _For more examples, please refer to the [Documentation](https://github.com/Vivid
 ## Roadmap
 
 - [X] Convert old code to official project
+- [X] Add remote execution logic
 
 _For a full list of proposed features and issues, please refer to the [Issues](https://github.com/VividRock/Crust/issues)_
 
@@ -111,7 +141,10 @@ This provides a brief review of the last two releases and an overview of their c
 
 | Release | Codename  | Date        | Contributor(s)  | Brief Description | Status  |
 |---------|-----------|-------------|-----------------|-------------------|---------|
-| 1.0.0   | Anorthose | 2026-03-02  | Dustin Estes    | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | Supported |
+| 1.2.0   | Cairngorm | 2026-03-07  | Dustin Estes    | #4 Enhancement: Compact Module Files, #2 Feature: Authentication | Latest |
+| 1.1.0   | Bloodstone | 2026-03-04 | Dustin Estes    | cleaned up code, updated description, updated documentation, added screenshot for readme, fixed output formatting issues, fixed issues found by agent review | End-of-Life |
+| 1.0.0   | Anorthose | 2026-03-02  | Dustin Estes    | Initial creation of the official Crust project. Migrated the project out of an old GitHub repo and updated all content to improve logic, formatting, etc. Created branding. | End-of-Life |
+
 
 _For a detailed list of all changes, please refer to the [Releases](https://github.com/VividRock/Crust/releases)_
 

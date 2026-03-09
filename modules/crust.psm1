@@ -6,12 +6,32 @@ function Invoke-CrustMenu {
 	.DESCRIPTION
 		Launches a Crust menu to provide a simple, retro-stylized, menu-driven interface for use in your own projects.
 
-# TODO Parameters
+  .PARAMETER LocalPath
+    Path to a local folder where temporary files can be created. Default: $env:TEMP
+
+  .PARAMETER CrustUri
+    Path to the crust.json config file.
+
+  .PARAMETER LangUri
+    Path to the language (i.e.  en-US.json) config file.
+
+  .PARAMETER MenuUri
+    Path to the menu.json config file.
+
+  .PARAMETER MenuName
+    Specify the name of a menu in the menu.json config file to load with Crust.
 
 	.EXAMPLE
-		PS> #TODO
+    PS> Invoke-CrustMenu -LocalPath $env:TEMP -CrustUri ".\crust.json" -LangUri ".\en-US.json" -MenuUri ".\menu.json" -MenuName "Main"
 
-		Launches a Crust interface using the config files you passed to customize it.
+    Local File Execution
+    Launches a Crust interface using the local config files you pass to customize it. The files can be located anywhere in your project.
+
+  .EXAMPLE
+    PS> Invoke-CrustMenu -LocalPath $LocalPath -CrustUri $CrustUri -LangUri $LangUri -MenuUri $MenuUri -MenuName $MenuName
+
+    Remote File Execution
+    Launches a Crust interface using the remote config files you pass to customize it. The files can be located anywhere with a valid web URL.
 
 	.INPUTS
 		None
@@ -32,15 +52,10 @@ function Invoke-CrustMenu {
     [ValidateScript({ Test-Path $_ })]
     [string]$LocalPath = "$($env:TEMP)",
     [Parameter(Mandatory = $true,
-      HelpMessage = "Path to the crust.json config file..",
+      HelpMessage = "Path to the crust.json config file.",
       ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
     [string]$CrustUri,
-    # [Parameter(Mandatory = $true,
-    #   HelpMessage = "Path to the module file for crust to load.",
-    #   ParameterSetName = "Default")]
-    #   [ValidateNotNullOrEmpty()]
-    # [string]$ModuleUri,
     [Parameter(Mandatory = $true,
       HelpMessage = "Path to the language (i.e.  en-US.json) config file.",
       ParameterSetName = "Default")]
@@ -55,12 +70,7 @@ function Invoke-CrustMenu {
       HelpMessage = "Specify the name of a menu in the menu.json config file to load with Crust.",
       ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [string]$MenuName,
-    [Parameter(Mandatory = $false,
-      HelpMessage = "Specify a language code if you want to override the user's preferred language.",
-      ParameterSetName = "Default")]
-    [ValidatePattern("[a-z]{2}-[A-Z]{2}")]
-    [string]$UICulture = $($PSUICulture)
+    [string]$MenuName
   )
 
   # Initialize Application
@@ -166,32 +176,6 @@ function Initialize-Crust {
   foreach ($Item in $PSBoundParameters.GetEnumerator()) {
     Write-CrustLog -Message "        $($Item.Key.PadRight(($PSBoundParameters.Keys | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)"
   }
-
-  # # Import Modules
-  # Write-CrustLog -Message "    - Modules"
-
-  # if (Test-Path -Path $Crust.Paths.Modules) {
-  #   foreach ($Item in (Get-ChildItem -Path $Crust.Paths.Modules -Recurse -Filter "*.psm1" | Where-Object -Property "Name" -ne "crust.psm1")) {
-  #     try {
-  #       Write-CrustLog -Message "        $($Item.Name)"
-  #       Write-CrustLog -Message "          Path: $($Item.FullName)"
-
-  #       $Temp_Result = Import-Module $Item.FullName -Scope Global -Force -PassThru
-  #       foreach ($Item in $Temp_Result.ExportedCommands.GetEnumerator()) {
-  #         Write-CrustLog -Message "            $($Item.Key)"
-  #       }
-  #       Write-CrustLog -Message "          Status: Success"
-  #     }
-  #     catch {
-  #       Write-CrustLog -Message "          Status: Failure"
-  #       Throw "Failure - $($Error.Exception.Message)"
-  #     }
-  #   }
-  # }
-  # else {
-  #   Write-CrustLog -Message "          Status: Failure"
-  #   Throw "Failure - ($Error.Exception.Message)"
-  # }
 
   Write-CrustLog -Message "    - Complete"
   Write-CrustLog -Message " "
