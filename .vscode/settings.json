@@ -25,7 +25,7 @@
   "powershell.codeFormatting.ignoreOneLineBlock": false, // Format one-line blocks like "if ($true) { ... }"
   "powershell.codeFormatting.newLineAfterOpenBrace": true,
   "powershell.codeFormatting.newLineAfterCloseBrace": true,
-  "powershell.codeFormatting.useCorrectCasing": true, // Use correct casing for cmdlet names
+  "powershell.codeFormatting.useCorrectCasing": false, // Use correct casing for cmdlet names
   "powershell.debugging.createTemporaryIntegratedConsole": true,
   // Adjust word separators so double-clicking selects the whole variable (including $)
   "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
