@@ -1,7 +1,7 @@
 {
   "Application": {
     "Name": "Crust",
-    "Version": "1.2.0",
+    "Version": "1.2.2",
     "Company": "VividRock",
     "Copyright": "Copyright (c) 2012-2026 VividRock | All Rights Reserved",
     "Links": "https://github.com/VividRock/Crust"
@@ -15,17 +15,23 @@
     "ScriptResultCode": ""
   },
   "Logging": {
-    "Directory": ".\\logs\\",
+    "Enabled": true,
+    "Directory": "set by Invoke-CrustMenu parameter",
     "TimestampFormat": "yyyy-MM-dd_HHmmss",
-    "Filename": "_Crust.log"
+    "Filename": "_Crust.log",
+    "FilePath": "set by Initialize-Crust function",
+    "CleanupAfterRun": false,
+    "SplatParams": "set by Write-CrustLog function"
   },
   "Paths": {
-    "Configs": ".\\configs\\",
-    "Modules": ".\\modules\\",
-    "Languages": ".\\lang\\"
+    "LangUri": "set by Initialize-Crust function",
+    "MenuUri": "set by Initialize-Crust function"
   },
-  "Preferences": {
-    "ErrorActionPreference": "Stop"
+  "PowerShell": {
+    "MinimumVersion": "7.0.0",
+    "Preferences": {
+      "ErrorActionPreference": "Stop"
+    }
   },
   "Settings": {
     "RunAsAdminRequired": false,
@@ -37,7 +43,7 @@
       "Enabled": true,
       "LaunchPoint": "AtStartup",
       "Context": "Machine",
-      "Method": "Popup"
+      "Method": "Inline"
     }
   }
 }

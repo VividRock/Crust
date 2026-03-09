@@ -1,16 +1,216 @@
-function Initialize-Crust {
-  # Configs
-  New-Variable -Name "Crust" -Value (Get-Content -Path ".\configs\crust.json" -Raw | ConvertFrom-Json) -Scope Global -Force
+function Invoke-CrustMenu {
+  <#
+	.SYNOPSIS
+		Launches a Crust menu to provide a simple, retro-stylized, menu-driven interface for use in your own projects.
 
-  # Metadata
+	.DESCRIPTION
+		Launches a Crust menu to provide a simple, retro-stylized, menu-driven interface for use in your own projects.
+
+  .PARAMETER CrustUri
+  Path to the crust.json config file.
+
+  .PARAMETER LangUri
+  Path to the language (i.e.  en-US.json) config file.
+
+  .PARAMETER MenuUri
+  Path to the menu.json config file.
+
+  .PARAMETER MenuName
+  Specify the name of a menu in the menu.json config file to load with Crust.
+
+  .PARAMETER LogDir
+    Path to a local folder where temporary files can be created. Default: "$($env:TEMP)\VividRock\Crust"
+
+  .EXAMPLE
+    PS> Invoke-CrustMenu -CrustUri $CrustUri -LangUri $LangUri -MenuUri $MenuUri -MenuName $MenuName -LogDir $-LogDir
+
+    Launches a Crust interface using the provided config file URIs you pass to customize it. The files can be located anywhere with a valid web URL or Filesystem path.
+
+	.INPUTS
+		None
+
+	.OUTPUTS
+		None
+
+	.LINK
+		https://github.com/VividRock/Crust
+  #>
+
+  [CmdletBinding(ConfirmImpact = 'Low', DefaultParameterSetName = "Default")]
+  param (
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Path to a local folder where temporary files can be created (logs, etc.).",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [ValidateScript({ Test-Path $_ })]
+    [string]$LogDir = "$($env:TEMP)\VividRock\Crust",
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the crust.json config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CrustUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the language (i.e.  en-US.json) config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$LangUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the menu.json config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Specify the name of a menu in the menu.json config file to load with Crust.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuName
+  )
+
+  begin {
+    # Initialize Application
+    Initialize-Crust @PSBoundParameters
+    Set-Tokens
+
+    # Initialize Interface
+    Clear-Interface
+    Initialize-Interface
+    Write-Interface -Message $Language.Security.Authentication.SectionTitle -IndentLevel 1
+    Write-Interface -Message $Interface.LineBreak -IndentLevel 0
+  }
+
+  process {
+    # Get Credentials
+    Write-CrustLog -Message "  Get Credential Object: AtStartup"
+
+    if (($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust.Security.Authentication.LaunchPoint -eq "AtStartup")) {
+      do {
+        # Get Credential
+        $Crust_Credential = Get-UserCredential -LaunchPoint $Crust.Security.Authentication.LaunchPoint  -Validate
+
+        # Process Retun
+        if ($Crust_Credential -eq $false) {
+          Write-Interface -Message $Language.Security.Authentication.FailedAuthentication -IndentLevel 3
+        }
+      } until (
+        ($Crust_Credential -ne $false) -or ($Crust_Credential -eq "UserCancelled")
+      )
+    }
+    elseif ($Crust.Security.Authentication.Enabled -eq $false) {
+      Write-CrustLog -Message "    - Skipped: Authentication not enabled in the crust.json config file "
+    }
+    else {
+      Write-CrustLog -Message "    - Skipped: Authentication LaunchPoint not configured for AtStartup in the crust.json config file"
+    }
+
+    Write-CrustLog -Message "    - Complete"
+    Write-CrustLog -Message " "
+
+    # Show Menu
+    Write-CrustLog -Message "  Show Menu"
+    Write-CrustLog -Message "    Name: $($MenuName)"
+
+    if ($Crust_Credential -eq "UserCancelled") {
+      <# Action to perform if the condition is true #>
+    }
+    elseif ((($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust_Credential)) -or ($Crust.Security.Authentication.Enabled -eq $false)) {
+      Get-InterfaceMenu -MenuUri $MenuUri
+      while ($MenuName -ne "Quit") {
+        $MenuName = Show-InterfaceMenu -Menu ($Menu | Where-Object -Property "Name" -eq $MenuName) -Name $MenuName
+      }
+    }
+    else {
+      # Do Nothing
+    }
+
+    Write-CrustLog -Message "    - Complete"
+  }
+
+  end {
+    # Write Footer to Log
+    Write-CrustLog -Footer
+
+    # Return Status
+    Return $Crust.Metadata.ScriptResultCode
+  }
+
+  clean {
+    # Cleanup Logs
+    if ($Crust.Logging.CleanupAfterRun) {
+      Get-Item -Path $Crust.Logging.FilePath | Remove-Item -Force
+
+      if ((Get-ChildItem -Path $Crust.Logging.Directory).Count -eq 0) {
+        Get-Item -Path ($Crust.Logging.Directory) | Remove-Item -Force
+      }
+      if ((Get-ChildItem -Path ($Crust.Logging.Directory | Split-Path -Parent)).Count -eq 0) {
+        Get-Item -Path ($Crust.Logging.Directory | Split-Path -Parent) | Remove-Item -Force
+      }
+    }
+
+    # Clear Environment
+    $Crust = $null
+    $Crust_Credential = $null
+  }
+}
+
+function Initialize-Crust {
+  [CmdletBinding(ConfirmImpact = 'Low', DefaultParameterSetName = "Default")]
+  param (
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Path to a local folder where temporary files can be created (logs, etc.).",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [ValidateScript({ Test-Path $_ })]
+    [string]$LogDir = "$($env:TEMP)\VividRock\Crust",
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the crust.json config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CrustUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the language (i.e.  en-US.json) config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$LangUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the menu.json config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Specify the name of a menu in the menu.json config file to load with Crust.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuName
+  )
+
+  # Import Crust Configuration
+  if ([System.Uri]::IsWellFormedUriString($CrustUri, [System.UriKind]::Absolute)) {
+    New-Variable -Name "Crust" -Value $(Invoke-RestMethod -Uri $CrustUri -UseBasicParsing) -Scope Global -Force
+  }
+  else {
+    New-Variable -Name "Crust" -Value (Get-Content -Path $CrustUri -Raw | ConvertFrom-Json) -Scope Global -Force
+  }
+
+  # Set Crust Configuration Data
+  $Crust.Logging.Directory = if ($LogDir -match "'\\VividRock\\Crust$'") {
+    $LogDir
+  }
+  else {
+    "$($LogDir)\VividRock\Crust\"
+  }
+  $Crust.Logging.Filepath = "Filesystem::$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
+  $Crust.Paths.LangUri = $LangUri
+  $Crust.Paths.MenuUri = $MenuUri
   $Crust.Metadata.StartDateTime = (Get-Date)
   $Crust.Metadata.CompleteDateTime = $null
   $Crust.Metadata.CompleteTimeSpan = $null
   $Crust.Metadata.ExecutionUser = $([System.Security.Principal.WindowsIdentity]::GetCurrent())
 
-  # Preferences
-  $ErrorActionPreference = "Stop"
-  foreach ($Item in $Crust.Preferences.PSObject.Properties) {
+  # PowerShell Environment
+  if ($PSVersionTable.PSVersion -lt $Crust.PowerShell.MinimumVersion) {
+    throw "The current version of PowerShell ($($PSVersionTable.PSVersion)) is less than the minimum version required by Crust ($($Curst.PowerShell.MinimumVersion))"
+  }
+  foreach ($Item in $Crust.PowerShell.Preferences.PSObject.Properties) {
     Set-Variable -Name $Item.Name -Value $Item.Value -Scope Global -Force
   }
 
@@ -25,40 +225,20 @@ function Initialize-Crust {
     Write-CrustLog -Message "        $($Item.Key.PadRight(($PSBoundParameters.Keys | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)"
   }
 
-  # Import Modules
-  Write-CrustLog -Message "    - Modules"
-
-  if (Test-Path -Path $Crust.Paths.Modules) {
-    foreach ($Item in (Get-ChildItem -Path $Crust.Paths.Modules -Recurse -Filter "*.psm1" | Where-Object -Property "Name" -ne "crust.psm1")) {
-      try {
-        Write-CrustLog -Message "        $($Item.Name)"
-        Write-CrustLog -Message "          Path: $($Item.FullName)"
-
-        $Temp_Result = Import-Module $Item.FullName -Scope Global -Force -PassThru
-        foreach ($Item in $Temp_Result.ExportedCommands.GetEnumerator()) {
-          Write-CrustLog -Message "            $($Item.Key)"
-        }
-        Write-CrustLog -Message "          Status: Success"
-      }
-      catch {
-        Write-CrustLog -Message "          Status: Failure"
-        Throw "Failure - $($Error.Exception.Message)"
-      }
-    }
-  }
-  else {
-    Write-CrustLog -Message "          Status: Failure"
-    Throw "Failure - ($Error.Exception.Message)"
-  }
-
   Write-CrustLog -Message "    - Complete"
   Write-CrustLog -Message " "
 
 }
+Export-ModuleMember -Function Invoke-CrustMenu -Variable Crust, Crust_Credential
 
 function Set-Tokens {
-  # Configs
-  New-Variable -Name "Language" -Value (Get-Content -Path "$($Crust.Paths.Languages)$($UICulture)\$($UICulture).json" -Raw | ConvertFrom-Json) -Scope Global -Force
+  # Import Configuration
+  if ([System.Uri]::IsWellFormedUriString($LangUri, [System.UriKind]::Absolute)) {
+    New-Variable -Name "Language" -Value $(Invoke-RestMethod -Uri $LangUri -UseBasicParsing) -Scope Global -Force
+  }
+  else {
+    New-Variable -Name "Language" -Value (Get-Content -Path $LangUri -Raw | ConvertFrom-Json) -Scope Global -Force
+  }
 
   # Update Dynamic Tokens
   foreach ($Item in $Language.DynamicToken.PSObject.Properties) {
@@ -150,7 +330,7 @@ function Write-Interface {
 
   process {
     # Process the Indent Level
-    If ($IndentLevel -ne 0) {
+    if ($IndentLevel -ne 0) {
       $i = $IndentLevel
       do {
         $Message = $Language.Component.Indention + $Message
@@ -158,28 +338,28 @@ function Write-Interface {
       }
       until ($i -le 0)
     }
-    Else {
+    else {
       # Do nothing, no indent is needed
     }
 
     # Process the SleepMilliseconds
-    If ($SleepMilliseconds -ge 1) {
+    if ($SleepMilliseconds -ge 1) {
       Start-Sleep -Milliseconds $SleepMilliseconds
     }
-    Else {
+    else {
       # Do nothing, no sleep is needed
     }
 
     # Write the output
-    If ($NoNewLine -eq $true) {
+    if ($NoNewLine -eq $true) {
       Write-Host $Message -ForegroundColor $ForegroundColor -NoNewline
     }
-    ElseIf ($NoNewLine -eq $false) {
+    elseif ($NoNewLine -eq $false) {
       Write-Host $Message -ForegroundColor $ForegroundColor
     }
 
     # Write line break if specified
-    If ($LineBreakAfter -eq $true) {
+    if ($LineBreakAfter -eq $true) {
       Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
     }
   }
@@ -229,7 +409,7 @@ function Get-InterfaceMenu {
   [CmdletBinding()]
   param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
-    [string] $File
+    [string] $MenuUri
   )
 
   begin {
@@ -238,7 +418,15 @@ function Get-InterfaceMenu {
 
   process {
     # Get Object from Config File
-    $Temp_Object = Get-Content -Path "$($Crust.Paths.Configs)\$($File)" -Raw | ConvertFrom-Json
+    # $Temp_Object = Get-Content -Path "$($Crust.Paths.Configs)\$($MenuUri)" -Raw | ConvertFrom-Json
+
+    # Import Configuration
+    if ([System.Uri]::IsWellFormedUriString($MenuUri, [System.UriKind]::Absolute)) {
+      New-Variable -Name "Menu" -Value $(Invoke-RestMethod -Uri $MenuUri -UseBasicParsing) -Scope Global -Force
+    }
+    else {
+      New-Variable -Name "Menu" -Value (Get-Content -Path $MenuUri -Raw | ConvertFrom-Json) -Scope Global -Force
+    }
   }
 
   end {
@@ -305,7 +493,9 @@ function Get-InterfaceMenuInput {
     # Prompt user for their choice
     Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
     Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
-    do { $Input_User = Read-Host -Prompt "Choose: " }
+    do {
+      $Input_User = Read-Host -Prompt "Choose: "
+    }
     until (($Input_User -ne "") -and ($Input_User -in $Menu.MenuItems.Index))
   }
 
@@ -417,18 +607,13 @@ function Confirm-UserCredential {
       { $_ -eq "ApplicationDirectory" } {
         # TODO Add this authentication context type
       }
-      Default {}
+      Default {
+      }
     }
   }
 
   end {
-    # Validate
-    if ($Validation) {
-      Return $true
-    }
-    else {
-      Return $false
-    }
+    Return $Validation
   }
 }
 
@@ -447,7 +632,6 @@ function Write-CrustLog {
       HelpMessage = "Writes the log footer.",
       ParameterSetName = "Footer")]
     [switch]$Footer,
-
     [Parameter(Mandatory = $false,
       HelpMessage = "Writes the log message.",
       ParameterSetName = "Message")]
@@ -456,32 +640,38 @@ function Write-CrustLog {
 
   begin {
     # Initialize
-    if ($Initialize) {
-      $Global:Params_Logging = @{
-        FilePath = "Filesystem::$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
+    if (($Initialize) -and ($Crust.Logging.Enabled)) {
+      $Temp_Params = @{
+        FilePath = $Crust.Logging.Filepath
         Append   = $true
       }
-      New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
-      Write-CrustLog -Message ""
+      $Crust.Logging.SplatParams = $Temp_Params
+      if ((Test-Path -Path $Crust.Logging.Directory) -eq $false) {
+        New-Item -Path $Crust.Logging.Directory -ItemType Directory -Force | Out-Null
+      }
+      Write-CrustLog -Message " "
     }
+
+    # Setup Splat
+    $SplatParams = $Crust.Logging.SplatParams
   }
 
   process {
     # Write Header
-    if ($Header) {
-      Out-File -InputObject " " @Params_Logging
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-      Out-File -InputObject "  $($Crust.Application.Name)" @Params_Logging
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+    if (($Header) -and ($Crust.Logging.Enabled)) {
+      Out-File -InputObject " " @SplatParams
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
+      Out-File -InputObject "  $($Crust.Application.Name)" @SplatParams
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
       foreach ($Item in ($Crust.Application.PSObject.Properties | Where-Object -Property "Name" -ne "Name")) {
-        Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @Params_Logging
+        Out-File -InputObject "  $($Item.Name.PadRight(($Crust.Application.PSObject.Properties.Name | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)" @SplatParams
       }
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-      Out-File -InputObject " " @Params_Logging
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
+      Out-File -InputObject " " @SplatParams
     }
 
     # Write Footer
-    if ($Footer) {
+    if (($Footer) -and ($Crust.Logging.Enabled)) {
       # Gather Data
       $Crust.Metadata.ScriptResult = "Success"
       $Crust.Metadata.ScriptResultCode = 0
@@ -489,20 +679,20 @@ function Write-CrustLog {
       $Crust.Metadata.CompleteTimeSpan = New-TimeSpan -Start $Crust.Metadata.StartDateTime -End $Crust.Metadata.CompleteDateTime
 
       # Output
-      Out-File -InputObject " " @Params_Logging
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-      Out-File -InputObject "  Script Result: $($Crust.Metadata.ScriptResult)" @Params_Logging
-      Out-File -InputObject "  Script Started: $($Crust.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-      Out-File -InputObject "  Script Completed: $($Crust.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @Params_Logging
-      Out-File -InputObject "  Total Time: $($Crust.Metadata.CompleteTimeSpan.Days) days, $($Crust.Metadata.CompleteTimeSpan.Hours) hours, $($Crust.Metadata.CompleteTimeSpan.Minutes) minutes, $($Crust.Metadata.CompleteTimeSpan.Seconds) seconds, $($Crust.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @Params_Logging
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
-      Out-File -InputObject "  End of Script" @Params_Logging
-      Out-File -InputObject "------------------------------------------------------------------------------" @Params_Logging
+      Out-File -InputObject " " @SplatParams
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
+      Out-File -InputObject "  Script Result: $($Crust.Metadata.ScriptResult)" @SplatParams
+      Out-File -InputObject "  Script Started: $($Crust.Metadata.StartDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @SplatParams
+      Out-File -InputObject "  Script Completed: $($Crust.Metadata.CompleteDateTime.ToUniversalTime().ToString(`"yyyy-MM-dd HH:mm:ss`")) (UTC)" @SplatParams
+      Out-File -InputObject "  Total Time: $($Crust.Metadata.CompleteTimeSpan.Days) days, $($Crust.Metadata.CompleteTimeSpan.Hours) hours, $($Crust.Metadata.CompleteTimeSpan.Minutes) minutes, $($Crust.Metadata.CompleteTimeSpan.Seconds) seconds, $($Crust.Metadata.CompleteTimeSpan.Milliseconds) milliseconds" @SplatParams
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
+      Out-File -InputObject "  End of Script" @SplatParams
+      Out-File -InputObject "------------------------------------------------------------------------------" @SplatParams
     }
 
     # Write Message
-    if ($Message) {
-      Out-File -InputObject $Message @Params_Logging
+    if (($Message) -and ($Crust.Logging.Enabled)) {
+      Out-File -InputObject $Message @SplatParams
     }
   }
 

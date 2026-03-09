@@ -1,0 +1,44 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Crust: Local",
+      "type": "PowerShell",
+      "request": "launch",
+      "script": ".\\tests\\Test_Invoke-CrustMenu.ps1",
+      "args": [
+        "-CrustUri",
+        ".\\configs\\crust.json",
+        "-LangUri",
+        ".\\lang\\en-US\\en-US.json",
+        "-MenuUri",
+        ".\\configs\\menu.json",
+        "-MenuName",
+        "Main",
+        "-LogDir",
+        ".\\logs"
+      ]
+    },
+    {
+      "name": "Crust: Remote",
+      "type": "PowerShell",
+      "request": "launch",
+      "script": ".\\tests\\Test_Invoke-CrustMenu.ps1",
+      "args": [
+        "-CrustUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/crust.json",
+        "-LangUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/lang/en-US/en-US.json",
+        "-MenuUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/menu.json",
+        "-MenuName",
+        "Main",
+        "-LogDir",
+        ".\\logs"
+      ]
+    }
+  ]
+}
