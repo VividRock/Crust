@@ -6,9 +6,9 @@
     "editor.defaultFormatter": "ms-vscode.powershell",
     "editor.trimAutoWhitespace": false,
     "files.encoding": "utf8bom",
-    "files.autoGuessEncoding": true
+    "files.autoGuessEncoding": true,
   },
-  // General editor settings for consistent coding style 
+  // General editor settings for consistent coding style
   "editor.insertSpaces": true,
   "editor.tabSize": 2,
   "editor.trimAutoWhitespace": false,
@@ -18,11 +18,10 @@
   "editor.wordWrapColumn": 120,
   "editor.wordWrap": "wordWrapColumn",
   // File handling settings
-  "files.trimTrailingWhitespace": false, // Trim whitespace at the end of lines
+  "files.trimTrailingWhitespace": true, // Trim whitespace at the end of lines
   "files.insertFinalNewline": true, // Ensure files end with a newline
   "files.trimFinalNewlines": true, // Trim extra newlines at the end of files
   // PowerShell extension specific formatting rules
-  "powershell.codeFormatting.preset": "OTBS", // Use the One True Brace Style preset, or "Custom"
   "powershell.codeFormatting.ignoreOneLineBlock": false, // Format one-line blocks like "if ($true) { ... }"
   "powershell.codeFormatting.newLineAfterOpenBrace": true,
   "powershell.codeFormatting.newLineAfterCloseBrace": true,
