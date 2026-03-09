@@ -1,8 +1,150 @@
-function Initialize-Crust {
-  # Configs
-  New-Variable -Name "Crust" -Value (Get-Content -Path ".\configs\crust.json" -Raw | ConvertFrom-Json) -Scope Global -Force
+function Invoke-CrustMenu {
+  <#
+	.SYNOPSIS
+		Launches a Crust menu to provide a simple, retro-stylized, menu-driven interface for use in your own projects.
 
-  # Metadata
+	.DESCRIPTION
+		Launches a Crust menu to provide a simple, retro-stylized, menu-driven interface for use in your own projects.
+
+# TODO Parameters
+
+	.EXAMPLE
+		PS> #TODO
+
+		Launches a Crust interface using the config files you passed to customize it.
+
+	.INPUTS
+		None
+
+	.OUTPUTS
+		None
+
+	.LINK
+		https://github.com/VividRock/Crust
+  #>
+
+  [CmdletBinding(ConfirmImpact = 'Low', DefaultParameterSetName = "Default")]
+  param (
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Path to a local folder where temporary files can be created.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [ValidateScript({ Test-Path $_ })]
+    [string]$LocalPath = "$($env:TEMP)",
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the crust.json config file..",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CrustUri,
+    # [Parameter(Mandatory = $true,
+    #   HelpMessage = "Path to the module file for crust to load.",
+    #   ParameterSetName = "Default")]
+    #   [ValidateNotNullOrEmpty()]
+    # [string]$ModuleUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the language (i.e.  en-US.json) config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$LangUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the menu.json config file.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuUri,
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Specify the name of a menu in the menu.json config file to load with Crust.",
+      ParameterSetName = "Default")]
+    [ValidateNotNullOrEmpty()]
+    [string]$MenuName,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Specify a language code if you want to override the user's preferred language.",
+      ParameterSetName = "Default")]
+    [ValidatePattern("[a-z]{2}-[A-Z]{2}")]
+    [string]$UICulture = $($PSUICulture)
+  )
+
+  # Initialize Application
+  Initialize-Crust -CrustUri $CrustUri
+  Set-Tokens
+
+  # Initialize Interface
+  Clear-Interface
+  Initialize-Interface
+  Write-Interface -Message $Language.Security.Authentication.SectionTitle -IndentLevel 1
+  Write-Interface -Message $Interface.LineBreak -IndentLevel 0
+
+  # Get Credentials
+  Write-CrustLog -Message "  Get Credential Object: AtStartup"
+
+  if (($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust.Security.Authentication.LaunchPoint -eq "AtStartup")) {
+    do {
+      # Get Credential
+      $Crust_Credential = Get-UserCredential -LaunchPoint $Crust.Security.Authentication.LaunchPoint  -Validate
+
+      # Process Retun
+      if ($Crust_Credential -eq $false) {
+        Write-Interface -Message $Language.Security.Authentication.FailedAuthentication -IndentLevel 3
+      }
+    } until (
+      ($Crust_Credential -ne $false) -or ($Crust_Credential -eq "UserCancelled")
+    )
+  }
+  elseif ($Crust.Security.Authentication.Enabled -eq $false) {
+    Write-CrustLog -Message "    - Skipped: Authentication not enabled in the crust.json config file "
+  }
+  else {
+    Write-CrustLog -Message "    - Skipped: Authentication LaunchPoint not configured for AtStartup in the crust.json config file"
+  }
+
+  Write-CrustLog -Message "    - Complete"
+  Write-CrustLog -Message " "
+
+  # Show Menu
+  Write-CrustLog -Message "  Show Menu"
+  Write-CrustLog -Message "    Name: $($MenuName)"
+
+  if ($Crust_Credential -eq "UserCancelled") {
+    <# Action to perform if the condition is true #>
+  }
+  elseif ((($Crust.Security.Authentication.Enabled -eq $true) -and ($Crust_Credential)) -or ($Crust.Security.Authentication.Enabled -eq $false)) {
+    Get-InterfaceMenu -MenuUri $MenuUri
+    while ($MenuName -ne "Quit") {
+      $MenuName = Show-InterfaceMenu -Menu ($Menu | Where-Object -Property "Name" -eq $MenuName) -Name $MenuName
+    }
+  }
+  else {
+    # Do Nothing
+  }
+
+  Write-CrustLog -Message "    - Complete"
+
+  # Finalize
+  Write-CrustLog -Footer
+  Return $Crust.Metadata.ScriptResultCode
+}
+
+function Initialize-Crust {
+  [CmdletBinding(ConfirmImpact = 'Low', DefaultParameterSetName = "Default")]
+  param (
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Path to the crust.json config file..",
+      ParameterSetName = "RemoteExecution")]
+    [ValidateNotNullOrEmpty()]
+    [string]$CrustUri
+  )
+
+  # Import Crust Configuration
+  if ([System.Uri]::IsWellFormedUriString($CrustUri, [System.UriKind]::Absolute)) {
+    New-Variable -Name "Crust" -Value $(Invoke-RestMethod -Uri $CrustUri -UseBasicParsing) -Scope Global -Force
+  }
+  else {
+    New-Variable -Name "Crust" -Value (Get-Content -Path $CrustUri -Raw | ConvertFrom-Json) -Scope Global -Force
+  }
+
+  # Set Crust Configuration Data
+  $Crust.Paths.LocalPath = $LocalPath
+  $Crust.Paths.LangUri = $LangUri
+  $Crust.Paths.MenuUri = $MenuUri
   $Crust.Metadata.StartDateTime = (Get-Date)
   $Crust.Metadata.CompleteDateTime = $null
   $Crust.Metadata.CompleteTimeSpan = $null
@@ -25,40 +167,46 @@ function Initialize-Crust {
     Write-CrustLog -Message "        $($Item.Key.PadRight(($PSBoundParameters.Keys | Measure-Object -Property Length -Maximum).Maximum + 1)): $($Item.Value)"
   }
 
-  # Import Modules
-  Write-CrustLog -Message "    - Modules"
+  # # Import Modules
+  # Write-CrustLog -Message "    - Modules"
 
-  if (Test-Path -Path $Crust.Paths.Modules) {
-    foreach ($Item in (Get-ChildItem -Path $Crust.Paths.Modules -Recurse -Filter "*.psm1" | Where-Object -Property "Name" -ne "crust.psm1")) {
-      try {
-        Write-CrustLog -Message "        $($Item.Name)"
-        Write-CrustLog -Message "          Path: $($Item.FullName)"
+  # if (Test-Path -Path $Crust.Paths.Modules) {
+  #   foreach ($Item in (Get-ChildItem -Path $Crust.Paths.Modules -Recurse -Filter "*.psm1" | Where-Object -Property "Name" -ne "crust.psm1")) {
+  #     try {
+  #       Write-CrustLog -Message "        $($Item.Name)"
+  #       Write-CrustLog -Message "          Path: $($Item.FullName)"
 
-        $Temp_Result = Import-Module $Item.FullName -Scope Global -Force -PassThru
-        foreach ($Item in $Temp_Result.ExportedCommands.GetEnumerator()) {
-          Write-CrustLog -Message "            $($Item.Key)"
-        }
-        Write-CrustLog -Message "          Status: Success"
-      }
-      catch {
-        Write-CrustLog -Message "          Status: Failure"
-        Throw "Failure - $($Error.Exception.Message)"
-      }
-    }
-  }
-  else {
-    Write-CrustLog -Message "          Status: Failure"
-    Throw "Failure - ($Error.Exception.Message)"
-  }
+  #       $Temp_Result = Import-Module $Item.FullName -Scope Global -Force -PassThru
+  #       foreach ($Item in $Temp_Result.ExportedCommands.GetEnumerator()) {
+  #         Write-CrustLog -Message "            $($Item.Key)"
+  #       }
+  #       Write-CrustLog -Message "          Status: Success"
+  #     }
+  #     catch {
+  #       Write-CrustLog -Message "          Status: Failure"
+  #       Throw "Failure - $($Error.Exception.Message)"
+  #     }
+  #   }
+  # }
+  # else {
+  #   Write-CrustLog -Message "          Status: Failure"
+  #   Throw "Failure - ($Error.Exception.Message)"
+  # }
 
   Write-CrustLog -Message "    - Complete"
   Write-CrustLog -Message " "
 
 }
+Export-ModuleMember -Function Invoke-CrustMenu -Variable Crust, Crust_Credential
 
 function Set-Tokens {
-  # Configs
-  New-Variable -Name "Language" -Value (Get-Content -Path "$($Crust.Paths.Languages)$($UICulture)\$($UICulture).json" -Raw | ConvertFrom-Json) -Scope Global -Force
+  # Import Configuration
+  if ([System.Uri]::IsWellFormedUriString($LangUri, [System.UriKind]::Absolute)) {
+    New-Variable -Name "Language" -Value $(Invoke-RestMethod -Uri $LangUri -UseBasicParsing) -Scope Global -Force
+  }
+  else {
+    New-Variable -Name "Language" -Value (Get-Content -Path $LangUri -Raw | ConvertFrom-Json) -Scope Global -Force
+  }
 
   # Update Dynamic Tokens
   foreach ($Item in $Language.DynamicToken.PSObject.Properties) {
@@ -229,7 +377,7 @@ function Get-InterfaceMenu {
   [CmdletBinding()]
   param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true, Position = 0)]
-    [string] $File
+    [string] $MenuUri
   )
 
   begin {
@@ -238,7 +386,15 @@ function Get-InterfaceMenu {
 
   process {
     # Get Object from Config File
-    $Temp_Object = Get-Content -Path "$($Crust.Paths.Configs)\$($File)" -Raw | ConvertFrom-Json
+    # $Temp_Object = Get-Content -Path "$($Crust.Paths.Configs)\$($MenuUri)" -Raw | ConvertFrom-Json
+
+    # Import Configuration
+    if ([System.Uri]::IsWellFormedUriString($MenuUri, [System.UriKind]::Absolute)) {
+      New-Variable -Name "Menu" -Value $(Invoke-RestMethod -Uri $MenuUri -UseBasicParsing) -Scope Global -Force
+    }
+    else {
+      New-Variable -Name "Menu" -Value (Get-Content -Path $MenuUri -Raw | ConvertFrom-Json) -Scope Global -Force
+    }
   }
 
   end {
@@ -422,13 +578,7 @@ function Confirm-UserCredential {
   }
 
   end {
-    # Validate
-    if ($Validation) {
-      Return $true
-    }
-    else {
-      Return $false
-    }
+    Return $Validation
   }
 }
 
