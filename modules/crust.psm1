@@ -284,7 +284,7 @@ function Write-Interface {
 
   process {
     # Process the Indent Level
-    If ($IndentLevel -ne 0) {
+    if ($IndentLevel -ne 0) {
       $i = $IndentLevel
       do {
         $Message = $Language.Component.Indention + $Message
@@ -292,28 +292,28 @@ function Write-Interface {
       }
       until ($i -le 0)
     }
-    Else {
+    else {
       # Do nothing, no indent is needed
     }
 
     # Process the SleepMilliseconds
-    If ($SleepMilliseconds -ge 1) {
+    if ($SleepMilliseconds -ge 1) {
       Start-Sleep -Milliseconds $SleepMilliseconds
     }
-    Else {
+    else {
       # Do nothing, no sleep is needed
     }
 
     # Write the output
-    If ($NoNewLine -eq $true) {
+    if ($NoNewLine -eq $true) {
       Write-Host $Message -ForegroundColor $ForegroundColor -NoNewline
     }
-    ElseIf ($NoNewLine -eq $false) {
+    elseif ($NoNewLine -eq $false) {
       Write-Host $Message -ForegroundColor $ForegroundColor
     }
 
     # Write line break if specified
-    If ($LineBreakAfter -eq $true) {
+    if ($LineBreakAfter -eq $true) {
       Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
     }
   }
@@ -447,7 +447,9 @@ function Get-InterfaceMenuInput {
     # Prompt user for their choice
     Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
     Write-Interface -Message $Language.Component.LineBreak -IndentLevel 0
-    do { $Input_User = Read-Host -Prompt "Choose: " }
+    do {
+      $Input_User = Read-Host -Prompt "Choose: "
+    }
     until (($Input_User -ne "") -and ($Input_User -in $Menu.MenuItems.Index))
   }
 
@@ -559,7 +561,8 @@ function Confirm-UserCredential {
       { $_ -eq "ApplicationDirectory" } {
         # TODO Add this authentication context type
       }
-      Default {}
+      Default {
+      }
     }
   }
 
