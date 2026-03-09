@@ -1,0 +1,45 @@
+{
+  // Enable auto-save for this project
+  "files.autoSave": "afterDelay",
+  // Ensure file encoding uses the UTF-8 BOM which PowerShell prefers
+  "[powershell]": {
+    "editor.defaultFormatter": "ms-vscode.powershell",
+    "editor.trimAutoWhitespace": false,
+    "files.encoding": "utf8bom",
+    "files.autoGuessEncoding": true
+  },
+  // General editor settings for consistent coding style 
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": false,
+  // Format the document when you save the file
+  "editor.formatOnSave": true,
+  // Set a word wrap column (e.g., 120 characters)
+  "editor.wordWrapColumn": 120,
+  "editor.wordWrap": "wordWrapColumn",
+  // File handling settings
+  "files.trimTrailingWhitespace": false, // Trim whitespace at the end of lines
+  "files.insertFinalNewline": true, // Ensure files end with a newline
+  "files.trimFinalNewlines": true, // Trim extra newlines at the end of files
+  // PowerShell extension specific formatting rules
+  "powershell.codeFormatting.preset": "OTBS", // Use the One True Brace Style preset, or "Custom"
+  "powershell.codeFormatting.ignoreOneLineBlock": false, // Format one-line blocks like "if ($true) { ... }"
+  "powershell.codeFormatting.newLineAfterOpenBrace": true,
+  "powershell.codeFormatting.newLineAfterCloseBrace": true,
+  "powershell.codeFormatting.useCorrectCasing": true, // Use correct casing for cmdlet names
+  "powershell.debugging.createTemporaryIntegratedConsole": true,
+  // Adjust word separators so double-clicking selects the whole variable (including $)
+  "editor.wordSeparators": "`~!@#%^&*()-=+[{]}\\|;:'\",.<>/?",
+  // Optional: Add custom PowerShell executable paths to the session menu
+  // "powershell.powerShellAdditionalExePaths": [
+  //   {
+  //     "shell": "c:\\Program Files\\PowerShell\\7\\pwsh.exe",
+  //     "label": "PowerShell Core 7"
+  //   }
+  // ],
+  // Apply specific color customizations only to this workspace
+  // "workbench.colorCustomizations": {
+  //     "activityBar.activeBackground": "#3399ff",
+  //     "activityBar.background": "#3399ff"
+  // }
+}
