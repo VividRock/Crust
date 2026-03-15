@@ -42,7 +42,6 @@ function Invoke-CrustMenu {
       HelpMessage = "Path to a local folder where temporary files can be created (logs, etc.).",
       ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [ValidateScript({ Test-Path $_ })]
     [string]$LogDir = "$($env:TEMP)\VividRock\Crust",
     [Parameter(Mandatory = $true,
       HelpMessage = "Path to the crust.json config file.",
@@ -159,7 +158,6 @@ function Initialize-Crust {
       HelpMessage = "Path to a local folder where temporary files can be created (logs, etc.).",
       ParameterSetName = "Default")]
     [ValidateNotNullOrEmpty()]
-    [ValidateScript({ Test-Path $_ })]
     [string]$LogDir = "$($env:TEMP)\VividRock\Crust",
     [Parameter(Mandatory = $true,
       HelpMessage = "Path to the crust.json config file.",
