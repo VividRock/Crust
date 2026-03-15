@@ -23,6 +23,11 @@
     "CleanupAfterRun": false,
     "SplatParams": "set by Write-CrustLog function"
   },
+  "StatusWindow": {
+    "Enabled": true,
+    "Console": "PowerShell",
+    "AlwaysOnTop": true
+  },
   "Paths": {
     "LangUri": "set by Initialize-Crust function",
     "MenuUri": "set by Initialize-Crust function"

@@ -39,6 +39,24 @@
         "-LogDir",
         ".\\logs"
       ]
+    },
+    {
+      "name": "Crust: Status",
+      "type": "PowerShell",
+      "request": "launch",
+      "script": ".\\tests\\Test_Invoke-CrustStatus.ps1",
+      "args": [
+        "-CrustUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/crust.json",
+        "-LangUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/lang/en-US/en-US.json",
+        "-MenuUri",
+        "https://raw.githubusercontent.com/VividRock/Crust/refs/heads/1.2.2/configs/menu.json",
+        "-MenuName",
+        "Main",
+        "-LogDir",
+        ".\\logs"
+      ]
     }
   ]
 }

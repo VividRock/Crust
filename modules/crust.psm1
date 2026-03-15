@@ -617,6 +617,90 @@ function Confirm-UserCredential {
   }
 }
 
+function Invoke-CrustStatus {
+  [CmdletBinding(DefaultParameterSetName = "Default")]
+  param (
+    [Parameter(Mandatory = $true,
+      HelpMessage = "Provide the path to the log file that the status window should monitor.",
+      ParameterSetName = "Default")]
+    [string]$Path,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "The identifier (name) given to the event object.",
+      ParameterSetName = "Default")]
+    [string]$Identifier,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Set the console application used when presenting the status window.",
+      ParameterSetName = "Default")]
+    [ValidateSet("PowerShell", "Terminal")]
+    [string]$Console,
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Set the title of the status window.",
+      ParameterSetName = "Default")]
+    [string]$Title = "Crust | VividRock",
+    [Parameter(Mandatory = $false,
+      HelpMessage = "Set the status window to remain on top of all windows.",
+      ParameterSetName = "Default")]
+    [switch]$AlwaysOnTop
+  )
+
+  begin {
+    # Validate
+    if ((Test-Path -Path $Path) -ne $true) {
+      Throw "Error: the path provided for the log file is invalid."
+    }
+
+    # Initialize
+  }
+
+  process {
+    # Using PowerShell
+    if ($Console -eq "PowerShell") {
+      $Temp_Process = Start-Process powershell "-NoExit -Command Get-Content $Path -Wait" -PassThru
+
+      # Always On Top Logic
+      if ($AlwaysOnTop) {
+        # Use .NET to find the window handle and set it to TOPMOST
+        Add-Type @"
+  using System;
+  using System.Runtime.InteropServices;
+  public class WinApi {
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+  }
+"@
+
+        # Give the window a second to spawn
+        Start-Sleep -Seconds 1
+        [WinApi]::SetWindowPos($Temp_Process.MainWindowHandle, [IntPtr](-1), 0, 0, 0, 0, 0x0001 -bor 0x0002)
+      }
+    }
+
+    # Using Terminal
+    # if ($Console -eq "Terminal") {
+    #   $Temp_Process = Start-Process -FilePath "wt.exe" -ArgumentList "--title `"VividRock - Strata | Status Output`"", "-p", "Windows PowerShell", "powershell", "-NoExit", "-Command", "Get-Content -Path $Path -Wait" -PassThru
+    # }
+
+    Register-ObjectEvent -InputObject $Temp_Process -EventName "Exited" -Action {
+
+    } | Out-Null
+
+    # 3. Wait for the process to exit
+    # This blocks the script and allows the event handler to fire
+    $Temp_Process | Wait-Process
+
+    "Testing Output" | Out-File -FilePath $Path -Append
+  }
+
+  end {
+
+  }
+
+  clean {
+
+  }
+}
+
 function Write-CrustLog {
   [CmdletBinding(DefaultParameterSetName = "Message")]
   param (
