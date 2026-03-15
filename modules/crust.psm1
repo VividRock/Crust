@@ -538,10 +538,12 @@ function Get-UserCredential {
         $Password = Read-Host -Prompt "    $($Language.Security.Authentication.Inline.Password)" -AsSecureString
 
         # Create Credential Object
-        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $Password
+        $Credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList $Username, $Password.Copy()
 
-        # Safely Discard Secure String
+        # # Safely Discard Secure String
+        $Password.Clear()
         $Password.Dispose()
+        Remove-Variable -Name "Password" -Force
       }
       Default {
         $Credential = $host.ui.PromptForCredential($Language.Security.Authentication.Popup.Title, $Language.Security.Authentication.Body, "", "")
