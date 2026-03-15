@@ -1,6 +1,6 @@
 {
   // Enable auto-save for this project
-  "files.autoSave": "afterDelay",
+  // "files.autoSave": "afterDelay",
   // Ensure file encoding uses the UTF-8 BOM which PowerShell prefers
   "[powershell]": {
     "editor.defaultFormatter": "ms-vscode.powershell",
