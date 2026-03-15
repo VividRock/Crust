@@ -196,7 +196,7 @@ function Initialize-Crust {
   else {
     "$($LogDir)\VividRock\Crust\"
   }
-  $Crust.Logging.Filepath = "Filesystem::$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
+  $Crust.Logging.Filepath = "$($Crust.Logging.Directory)$(Get-Date -Format $Crust.Logging.TimestampFormat)$($Crust.Logging.Filename)"
   $Crust.Paths.LangUri = $LangUri
   $Crust.Paths.MenuUri = $MenuUri
   $Crust.Metadata.StartDateTime = (Get-Date)
