@@ -216,6 +216,11 @@ function Initialize-Crust {
   Write-CrustLog -Initialize
   Write-CrustLog -Header
 
+  # Start Status Window
+  if ($Crust.StatusWindow.Enabled) {
+    Invoke-CrustStatus -Path $Crust.Logging.FilePath -Identifier $Crust.StatusWindow.Identifier -Console $Crust.StatusWindow.Console -Title $Crust.StatusWindow.Title -AlwaysOnTop:$([bool]$Crust.StatusWindow.AlwaysOnTop)
+  }
+
   # Parameters
   Write-CrustLog -Message "  Initialize"
   Write-CrustLog -Message "    - Parameters"
@@ -227,7 +232,7 @@ function Initialize-Crust {
   Write-CrustLog -Message " "
 
 }
-Export-ModuleMember -Function Invoke-CrustMenu -Variable Crust, Crust_Credential
+# Export-ModuleMember -Function Invoke-CrustMenu -Variable Crust, Crust_Credential
 
 function Set-Tokens {
   # Import Configuration
@@ -648,16 +653,19 @@ function Invoke-CrustStatus {
     if ((Test-Path -Path $Path) -ne $true) {
       Throw "Error: the path provided for the log file is invalid."
     }
-
-    # Initialize
   }
 
   process {
+    # Resolve Parameters
+    $Path = Resolve-Path -Path $Path
+
     # Using PowerShell
     if ($Console -eq "PowerShell") {
-      $Temp_Process = Start-Process powershell "-NoExit -Command Get-Content $Path -Wait" -PassThru
+      # Launch Status Window
+      # $Temp_Process = Start-Process pwsh "-NoExit -Command Get-Content $Path -Wait" -PassThru
+      $Temp_Process = Start-Process -FilePath "pwsh" -ArgumentList "-NoExit", "-Command", "Get-Content -Path $Path -Wait; `$Host.UI.RawUI.WindowTitle = '$Title'" -PassThru
 
-      # Always On Top Logic
+      # Always On Top
       if ($AlwaysOnTop) {
         # Use .NET to find the window handle and set it to TOPMOST
         Add-Type @"
@@ -677,19 +685,21 @@ function Invoke-CrustStatus {
     }
 
     # Using Terminal
-    # if ($Console -eq "Terminal") {
-    #   $Temp_Process = Start-Process -FilePath "wt.exe" -ArgumentList "--title `"VividRock - Strata | Status Output`"", "-p", "Windows PowerShell", "powershell", "-NoExit", "-Command", "Get-Content -Path $Path -Wait" -PassThru
-    # }
+    if ($Console -eq "Terminal") {
+      # Launch Status Window
+      $Temp_Process = Start-Process -FilePath "wt.exe" -ArgumentList "--title `"$Title`"", "-p", "Windows PowerShell", "pwsh", "-NoExit", "-Command", "Get-Content -Path $Path -Wait" -PassThru
+
+      # Always On Top
+      if ($AlwaysOnTop) {
+        # Terminal Doesn't Support this Via Command Line (Yet?)
+      }
+    }
 
     Register-ObjectEvent -InputObject $Temp_Process -EventName "Exited" -Action {
-
+      if ($Crust.Logging) {
+        # Do Something
+      }
     } | Out-Null
-
-    # 3. Wait for the process to exit
-    # This blocks the script and allows the event handler to fire
-    $Temp_Process | Wait-Process
-
-    "Testing Output" | Out-File -FilePath $Path -Append
   }
 
   end {
