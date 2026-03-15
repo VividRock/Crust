@@ -24,9 +24,11 @@
     "SplatParams": "set by Write-CrustLog function"
   },
   "StatusWindow": {
-    "Enabled": true,
+    "Enabled": false,
     "Console": "PowerShell",
-    "AlwaysOnTop": true
+    "identifier": "crust-status",
+    "Title": "Crust  |  VividRock",
+    "AlwaysOnTop": false
   },
   "Paths": {
     "LangUri": "set by Initialize-Crust function",
@@ -45,7 +47,7 @@
   },
   "Security": {
     "Authentication": {
-      "Enabled": true,
+      "Enabled": false,
       "LaunchPoint": "AtStartup",
       "Context": "Machine",
       "Method": "Inline"
